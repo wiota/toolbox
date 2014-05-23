@@ -3,7 +3,6 @@ from portphilio_lib.models import *
 def build_db():
     ## Get the user object
     mc = User.objects.get(username="maggiecasey")
-    print mc.id
 
     ## Drop the Media and rebuild
     Media.drop_collection()
