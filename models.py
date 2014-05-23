@@ -69,7 +69,7 @@ class Work(Document):
 
 
 class Subset(Document):
-    subset = ListField(ReferenceField(Work))
+    subset = ListField(GenericReferenceField())
     slug = StringField(required=True)
     title = StringField(required=True)
     meta = {'allow_inheritance': True}

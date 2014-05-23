@@ -1,5 +1,6 @@
 import datetime
 from bson.objectid import ObjectId
+from bson.dbref import DBRef
 from flask import jsonify
 from mongoengine.queryset import QuerySet
 from mongoengine import Document
@@ -11,6 +12,8 @@ def bson_encode(obj):
         return obj.isoformat()
     elif isinstance(obj, ObjectId):
         return unicode(obj)
+    elif isinstance(obj, DBRef):
+        return unicode(obj.id)
     elif isinstance(obj, list):
         return [bson_encode(x) for x in obj]
     elif not isinstance(obj, dict):
