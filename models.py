@@ -55,24 +55,20 @@ class Sound(Media):
     pass
 
 
-class Work(Document):
-    _expand_fields = ['media']
-    title = StringField(required=True)
-    slug = StringField(required=True)
-    medium = StringField()
-    size = StringField()
-    date = StringField()
-    description = StringField()
-    media = ListField(ReferenceField(Media))
-    owner = ReferenceField(User, required=True)
-
-
 class Subset(Document):
     subset = ListField(GenericReferenceField())
     slug = StringField(required=True)
     title = StringField(required=True)
     meta = {'allow_inheritance': True}
     owner = ReferenceField(User, required=True)
+
+
+class Work(Subset):
+    _expand_fields = ['subset']
+    medium = StringField()
+    size = StringField()
+    date = StringField()
+    description = StringField()
 
 
 class Category(Subset):
