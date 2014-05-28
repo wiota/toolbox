@@ -1,4 +1,3 @@
-from portphilio_admin import db
 from flask_login import UserMixin
 from mongoengine import *
 import bson
