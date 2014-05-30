@@ -1,10 +1,29 @@
+import os
 import datetime
+from urlparse import urlparse
 from bson.objectid import ObjectId
 from bson.dbref import DBRef
 from flask import jsonify
 from mongoengine.queryset import QuerySet
 from mongoengine import Document
+from flask.ext.mongoengine import MongoEngine
+from portphilio_lib.models import Subset, Host
 
+def initialize_db(flask_app):
+    MONGO_URL = os.environ.get('MONGOHQ_URL')
+    flask_app.config["MONGODB_SETTINGS"] = {
+        "DB": urlparse(MONGO_URL).path[1:],
+        "host": MONGO_URL}
+    return MongoEngine(flask_app)
+
+def get_subset(config, subset_name):
+    return Subset.objects.get(slug=subset_name, owner=config["OWNER"])
+
+def get_owner(host):
+    try:
+        return Host.objects.get(hostname=host).owner
+    except Host.DoesNotExist :
+        return None
 
 def bson_encode(obj):
     """Encodes BSON-specific elements to jsonify-able strings"""
