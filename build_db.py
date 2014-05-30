@@ -69,4 +69,28 @@ def build_db():
         title="INSTALLATIONS",
         owner=mc).save()
 
-    Body(subset=[ins_sub, scu_sub], owner=mc).save()
+    body = Body(subset=[ins_sub, scu_sub], owner=mc).save()
+
+    ## And now for some really crazy shit...
+
+    # Add a work to the body
+    bw = Work(title="Bodywork", slug="bodywork", owner=mc).save()
+    body.subset = body.subset + [bw]
+    body.save()
+
+    # Add a category to a category
+    newcat = Category(slug="catsandkittens", title="CATegory", owner=mc).save()
+    ins = Category.objects.get(slug="installations", owner=mc)
+    ins.subset = ins.subset + [newcat]
+    ins.save()
+
+    # Add an existing category to the body
+    newcat = Category.objects.get(slug="catsandkittens", owner=mc)
+    body.subset = body.subset + [newcat]
+    body.save()
+
+    # Add a Work and a Category to a Work
+    rang = Work.objects.get(owner=mc, slug="range")
+    newcat = Category.objects.get(slug="catsandkittens", owner=mc)
+    rang.subset = rang.subset + [bw, newcat]
+    rang.save()
