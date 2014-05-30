@@ -4,6 +4,7 @@ import bson
 
 
 class User(Document, UserMixin):
+    _expand_fields = []
     id = ObjectIdField(
         primary_key=True,
         default=lambda: bson.ObjectId())
@@ -11,6 +12,7 @@ class User(Document, UserMixin):
     username = StringField(required=True, max_length=50)
     password = StringField(required=True)
     admin = BooleanField(default=False)
+    stripe_id = StringField()
 
     meta = {'allow_inheritance': True}
 
