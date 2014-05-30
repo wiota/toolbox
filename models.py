@@ -80,5 +80,5 @@ class Tag(Subset):
 
 class Body(Document):
     _expand_fields = ['subset']
-    subset = ListField(ReferenceField(Subset))
+    subset = ListField(ReferenceField(Subset, reverse_delete_rule=PULL))
     owner = ReferenceField(User, required=True)
