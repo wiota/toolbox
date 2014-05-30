@@ -4,7 +4,7 @@ from portphilio_lib.models import *
 def build_db():
     # Drop everything
     Body.drop_collection()
-    Media.drop_collection()
+    Medium.drop_collection()
     Subset.drop_collection()
 
     # Get the user object
@@ -15,7 +15,7 @@ def build_db():
         "https://portphilio_maggiecasey.s3.amazonaws.com/BearingTheEcho01.jpg",
         "https:///portphilio_maggiecasey.s3.amazonaws.com/Range01.jpg"]
 
-    range_media = [Photo(owner=mc, href=x).save() for x in range_urls]
+    range_media = [Photo(owner=mc, href=x, slug="", title="").save() for x in range_urls]
 
     range_work = Work(
         title="Range",

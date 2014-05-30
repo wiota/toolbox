@@ -38,29 +38,28 @@ class Administrator(User):
     admin = BooleanField(default=True)
 
 
-class Media(Document):
-    meta = {'allow_inheritance': True}
-    owner = ReferenceField(User, required=True)
-
-
-class Photo(Media):
-    href = StringField(required=True)
-
-
-class Video(Media):
-    pass
-
-
-class Sound(Media):
-    pass
-
-
 class Subset(Document):
-    subset = ListField(GenericReferenceField())
+    subset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
     slug = StringField(required=True)
     title = StringField(required=True)
     meta = {'allow_inheritance': True}
     owner = ReferenceField(User, required=True)
+
+
+class Medium(Subset):
+    pass
+
+
+class Photo(Medium):
+    href = StringField(required=True)
+
+
+class Video(Medium):
+    pass
+
+
+class Audio(Medium):
+    pass
 
 
 class Work(Subset):
