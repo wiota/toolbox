@@ -5,9 +5,10 @@ from bson.objectid import ObjectId
 from bson.dbref import DBRef
 from flask import jsonify
 from mongoengine.queryset import QuerySet
-from mongoengine import Document
+from mongoengine import Document, StringField
 from flask.ext.mongoengine import MongoEngine
-from portphilio_lib.models import Subset, Host, Work
+from portphilio_lib.models import Subset, Host, Work, LongStringField
+
 
 def initialize_db(flask_app):
     MONGO_URL = os.environ.get('MONGOHQ_URL')
@@ -16,18 +17,22 @@ def initialize_db(flask_app):
         "host": MONGO_URL}
     return MongoEngine(flask_app)
 
+
 def get_subset(config, subset_name):
     return Subset.objects.get(slug=subset_name, owner=config["OWNER"])
+
 
 def get_owner(host):
     try:
         return Host.objects.get(hostname=host).owner
-    except Host.DoesNotExist :
+    except Host.DoesNotExist:
         return None
 
-def get_work_from_slug(owner, slug) :
-    work =  Work.objects.get(owner=owner, slug=slug)
+
+def get_work_from_slug(owner, slug):
+    work = Work.objects.get(owner=owner, slug=slug)
     return work, work.subset
+
 
 def bson_encode(obj):
     """Encodes BSON-specific elements to jsonify-able strings"""
@@ -99,7 +104,24 @@ def document_to_dict(self, expand=True):
     expand_fields = self._expand_fields if expand else []
     return to_dict(self.select_related(), expand_fields)
 
+
+def document_to_form(self):
+    type_dict = {
+        StringField.__name__: "text",
+        LongStringField.__name__: "textarea"
+    }
+
+    ret = {"formFields": []}
+    for field in self._fields:
+        if type(self._fields[field]) in [StringField, LongStringField]:
+            ret["formFields"].append({self._fields[field].name: {
+                "label": self._fields[field].verbose_name,
+                "required": self._fields[field].required,
+                "type": type_dict[type(self._fields[field]).__name__]}})
+    return jsonify(ret)
+
 setattr(QuerySet, 'to_bson', queryset_to_bson)
 setattr(QuerySet, 'to_dict', queryset_to_dict)
 setattr(Document, 'to_bson', document_to_bson)
 setattr(Document, 'to_dict', document_to_dict)
+setattr(Document, 'to_form', document_to_form)

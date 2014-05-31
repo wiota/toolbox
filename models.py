@@ -3,6 +3,10 @@ from mongoengine import *
 import bson
 
 
+class LongStringField(StringField):
+    pass
+
+
 class User(Document, UserMixin):
     _expand_fields = []
     id = ObjectIdField(
@@ -43,7 +47,7 @@ class Administrator(User):
 class Subset(Document):
     subset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
     slug = StringField(required=True)
-    title = StringField(required=True)
+    title = StringField(required=True, verbose_name="Title")
     meta = {'allow_inheritance': True}
     owner = ReferenceField(User, required=True)
 
@@ -66,10 +70,10 @@ class Audio(Medium):
 
 class Work(Subset):
     _expand_fields = ['subset']
-    medium = StringField()
-    size = StringField()
-    date = StringField()
-    description = StringField()
+    medium = StringField(verbose_name="Medium")
+    size = StringField(verbose_name="Size")
+    date = StringField(verbose_name="Date created")
+    description = LongStringField(verbose_name="Description")
 
 
 class Category(Subset):
