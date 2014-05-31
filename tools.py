@@ -114,10 +114,11 @@ def document_to_form(self):
     ret = {"formFields": []}
     for field in self._fields:
         if type(self._fields[field]) in [StringField, LongStringField]:
-            ret["formFields"].append({self._fields[field].name: {
-                "label": self._fields[field].verbose_name,
-                "required": self._fields[field].required,
-                "type": type_dict[type(self._fields[field]).__name__]}})
+            if self._fields[field].verbose_name is not None:
+                ret["formFields"].append({self._fields[field].name: {
+                    "label": self._fields[field].verbose_name,
+                    "required": self._fields[field].required,
+                    "type": type_dict[type(self._fields[field]).__name__]}})
     return jsonify(ret)
 
 setattr(QuerySet, 'to_bson', queryset_to_bson)
