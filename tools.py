@@ -5,7 +5,7 @@ from bson.objectid import ObjectId
 from bson.dbref import DBRef
 from flask import jsonify
 from mongoengine.queryset import QuerySet
-from mongoengine import Document, StringField
+from mongoengine import Document, StringField, fields
 from flask.ext.mongoengine import MongoEngine
 from portphilio_lib.models import Subset, Host, Work, LongStringField
 
@@ -120,6 +120,37 @@ def document_to_form(self):
                     "required": self._fields[field].required,
                     "type": type_dict[type(self._fields[field]).__name__]}})
     return jsonify(ret)
+
+
+def update_document(document, data_dict):
+    """ Updates a MongoEngine document from a dict(). Stolen from:
+        http://stackoverflow.com/a/19007761
+    """
+
+    def field_value(field, value):
+
+        if field.__class__ in (fields.ListField, fields.SortedListField):
+            return [
+                field_value(field.field, item)
+                for item in value
+            ]
+        if field.__class__ in (
+            fields.EmbeddedDocumentField,
+            fields.GenericEmbeddedDocumentField,
+            fields.ReferenceField,
+            fields.GenericReferenceField
+        ):
+            return field.document_type(**value)
+        else:
+            return value
+
+    [setattr(
+        document, key,
+        field_value(document._fields[key], value)
+    ) for key, value in data_dict.items()]
+
+    return document
+
 
 setattr(QuerySet, 'to_bson', queryset_to_bson)
 setattr(QuerySet, 'to_dict', queryset_to_dict)
