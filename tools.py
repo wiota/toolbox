@@ -111,14 +111,14 @@ def document_to_form(self):
         LongStringField.__name__: "textarea"
     }
 
-    ret = {"formFields": []}
+    ret = {"formFields": {}}
     for field in self._fields:
         if type(self._fields[field]).__name__ in type_dict.keys():
             if self._fields[field].verbose_name is not None:
-                ret["formFields"].append({self._fields[field].name: {
+                ret["formFields"][self._fields[field].name] = {
                     "label": self._fields[field].verbose_name,
                     "required": self._fields[field].required,
-                    "type": type_dict[type(self._fields[field]).__name__]}})
+                    "type": type_dict[type(self._fields[field]).__name__]}
     return jsonify(ret)
 
 
