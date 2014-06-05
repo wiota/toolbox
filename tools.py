@@ -71,7 +71,7 @@ def to_dict(ret, deref_list=[]):
     return retdict
 
 
-def make_response(ret):
+def make_response(ret=''):
     """ Wraps a dictionary into a response dictionary for the API endpoint to
         return as BSON.
     """
