@@ -1,5 +1,7 @@
 import os
+import re
 import datetime
+import translitcodec
 from urlparse import urlparse
 from bson.objectid import ObjectId
 from bson.dbref import DBRef
@@ -8,6 +10,10 @@ from mongoengine.queryset import QuerySet
 from mongoengine import Document, StringField, fields
 from flask.ext.mongoengine import MongoEngine
 from portphilio_lib.models import Subset, Host, Work, LongStringField
+
+
+# For slugify
+_punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
 
 
 def initialize_db(flask_app):
@@ -76,6 +82,18 @@ def make_response(ret=''):
         return as BSON.
     """
     return {"result": ret}
+
+
+def slugify(text, delim=u'-'):
+    """ Turns any string (e.g., a title) into a URL-able ASCII-only slug.
+    """
+    result = []
+    for word in _punct_re.split(text.lower()):
+        word = word.encode('translit/long')
+        if word:
+            result.append(word)
+    return unicode(delim.join(result))
+
 
 #### MongoEngine Extensions ####
 
