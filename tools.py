@@ -110,10 +110,10 @@ def queryset_to_dict(self):
     return [x.to_dict(expand=False) for x in self]
 
 
-def document_to_bson(self):
+def document_to_bson(self, expand=True):
     """ Converts a Document into a wrapped BSON response.
     """
-    return bsonify(**make_response(self.to_dict()))
+    return bsonify(**make_response(self.to_dict(expand)))
 
 
 def document_to_dict(self, expand=True):
