@@ -53,7 +53,7 @@ class Subset(Document):
 
 
 class Medium(Subset):
-    pass
+    _expand_fields = []
 
 
 class Photo(Medium):
