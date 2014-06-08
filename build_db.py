@@ -11,9 +11,9 @@ def build_db():
     mc = User.objects.get(username="maggiecasey")
 
     range_urls = [
-        "https://portphilio_maggiecasey.s3.amazonaws.com/Rangeweb01.jpg",
-        "https://portphilio_maggiecasey.s3.amazonaws.com/BearingTheEcho01.jpg",
-        "https:///portphilio_maggiecasey.s3.amazonaws.com/Range01.jpg"]
+        "/image/Rangeweb01.jpg",
+        "/image/BearingTheEcho01.jpg",
+        "/image/Range01.jpg"]
 
     range_media = [Photo(owner=mc, href=x, slug="", title="").save() for x in range_urls]
 
