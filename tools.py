@@ -12,6 +12,7 @@ from flask.ext.mongoengine import MongoEngine
 from portphilio_lib.models import Subset, Host, Work, LongStringField
 import requests
 import boto
+import json
 
 
 # For slugify
@@ -64,6 +65,8 @@ def retrieve_image(image_name, user_name):
                         "params": params,
                         "save": {
                             "image_identifier": image_name,
+                            "save_profiles": "true",
+                            "quality": 90,
                             "s3_destination": {
                                 "bucket": bucket_name,
                                 "key": "%s.%s" % (fn, ext)
