@@ -1,21 +1,29 @@
 from portphilio_lib.models import *
 
+def clear_db(username):
+    # Get the username
+    u = User.objects.get(username=username)
 
-def build_db():
-    # Drop everything
-    Body.drop_collection()
-    Medium.drop_collection()
-    Subset.drop_collection()
+    # Remove everything that the user owns
+    for doc in [Body, Medium, Subset]:
+        doc.objects(owner=u).delete()
+
+    # Create an empty Body (since there is no endpoint for this)
+    Body(subset=[], owner=u).save()
+
+def build_db(username):
+    clear_db(username)
 
     # Get the user object
-    mc = User.objects.get(username="maggiecasey")
+    testuser = User.objects.get(username=username)
 
     range_urls = [
+        "/image/TrainFromTurmoilToHappyClouds.jpg",
         "/image/Rangeweb01.jpg",
         "/image/BearingTheEcho01.jpg",
         "/image/Range01.jpg"]
 
-    range_media = [Photo(owner=mc, href=x, slug="", title="").save() for x in range_urls]
+    range_media = [Photo(owner=testuser, href=x, slug="", title="").save() for x in range_urls]
 
     range_work = Work(
         title="Range",
@@ -25,7 +33,7 @@ def build_db():
         date="2010",
         description="Range is a manipulated photograph taken of a military proving ground in Nevada. The resolution of the photograph was deliberately modified multiple times and layered together in a composite image. The resulting photograph appears to have multiple resolutions determined by the viewing distance.\nCollaboration between Maggie Casey and Jeffrey Stockbridge.",
         subset=range_media,
-        owner=mc).save()
+        owner=testuser).save()
     ins_dict_list = [
         {"title": "Gold Tooth", "slug": "gold-tooth"},
         {"title": "Processions: an Elaborative Cartography", "slug": "processions-an-elaborative-cartography"},
@@ -37,7 +45,7 @@ def build_db():
 
     ins_list = [range_work] + [Work(title=x['title'],
                                     slug=x['slug'],
-                                    owner=mc,
+                                    owner=testuser,
                                     subset=[]).save() for x in ins_dict_list]
 
     scu_dict_list = [
@@ -55,32 +63,32 @@ def build_db():
         Work(
             title=x['title'],
             slug=x['slug'],
-            owner=mc).save() for x in scu_dict_list]
+            owner=testuser).save() for x in scu_dict_list]
 
     scu_sub = Category(
         subset=scu_list,
         slug="sculpture",
         title="SCULPTURE",
-        owner=mc).save()
+        owner=testuser).save()
 
     ins_sub = Category(
         subset=ins_list,
         slug="installations",
         title="INSTALLATIONS",
-        owner=mc).save()
+        owner=testuser).save()
 
-    body = Body(subset=[ins_sub, scu_sub], owner=mc).save()
+    body = Body(subset=[ins_sub, scu_sub], owner=testuser).save()
 
     ## And now for some really crazy shit...
 
     # Add a work to the body
-    bw = Work(title="Bodywork", slug="bodywork", owner=mc).save()
+    bw = Work(title="Bodywork", slug="bodywork", owner=testuser).save()
     body.subset = body.subset + [bw]
     body.save()
 
     # Add a category to a category
-    newcat = Category(slug="catsandkittens", title="CATegory", owner=mc).save()
-    ins = Category.objects.get(slug="installations", owner=mc)
+    newcat = Category(slug="catsandkittens", title="CATegory", owner=testuser).save()
+    ins = Category.objects.get(slug="installations", owner=testuser)
     ins.subset = ins.subset + [newcat]
     ins.save()
 
@@ -89,12 +97,12 @@ def build_db():
     ins.save()
 
     # Add an existing category to the body
-    newcat = Category.objects.get(slug="catsandkittens", owner=mc)
+    newcat = Category.objects.get(slug="catsandkittens", owner=testuser)
     body.subset = body.subset + [newcat]
     body.save()
 
     # Add a Work and a Category to a Work
-    rang = Work.objects.get(owner=mc, slug="range")
-    newcat = Category.objects.get(slug="catsandkittens", owner=mc)
+    rang = Work.objects.get(owner=testuser, slug="range")
+    newcat = Category.objects.get(slug="catsandkittens", owner=testuser)
     rang.subset = rang.subset + [bw, newcat]
     rang.save()
