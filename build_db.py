@@ -84,6 +84,10 @@ def build_db():
     ins.subset = ins.subset + [newcat]
     ins.save()
 
+    # Add a work to a category
+    ins.subset = ins.subset + [bw]
+    ins.save()
+
     # Add an existing category to the body
     newcat = Category.objects.get(slug="catsandkittens", owner=mc)
     body.subset = body.subset + [newcat]
