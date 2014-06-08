@@ -76,7 +76,6 @@ def retrieve_image(image_name, user_name):
                 "http://api.blitline.com/job",
                 data={
                     'json': json.dumps(blit_job)})
-            app.logger.debug(r.text)
         return redirect("%s%s.%s" % (url, fn, ext))
     else:
         return redirect("%s%s" % (url, image_name))
