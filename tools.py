@@ -5,11 +5,13 @@ import translitcodec
 from urlparse import urlparse
 from bson.objectid import ObjectId
 from bson.dbref import DBRef
-from flask import jsonify
+from flask import jsonify, request, redirect
 from mongoengine.queryset import QuerySet
 from mongoengine import Document, StringField, fields
 from flask.ext.mongoengine import MongoEngine
 from portphilio_lib.models import Subset, Host, Work, LongStringField
+import requests
+import boto
 
 
 # For slugify
@@ -22,6 +24,62 @@ def initialize_db(flask_app):
         "DB": urlparse(MONGO_URL).path[1:],
         "host": MONGO_URL}
     return MongoEngine(flask_app)
+
+
+def retrieve_image(image_name, user_name):
+    bucket_name = "%s_%s" % (os.environ['S3_BUCKET'], user_name)
+    size = request.args.to_dict()
+    w = size.get('w', None)
+    h = size.get('h', None)
+    split = image_name.split(".")
+    fn = "".join(split[0:-1])
+    ext = split[-1]
+    params = {}
+    url = "https://%s.s3.amazonaws.com/" % (bucket_name)
+
+    if w is not None or h is not None:  # Some size is given
+        fn += "-"  # Separator for size
+        if w is not None:
+            params["width"] = int(w)
+            fn += "%sw" % (w)
+        if h is not None:
+            params["height"] = int(h)
+            fn += "%sh" % (h)
+
+        conn = boto.connect_s3()
+        bucket = conn.get_bucket(bucket_name)
+        key = bucket.get_key("%s.%s" % (fn, ext))
+
+        if key is None:
+            blit_job = {
+                "application_id": os.environ['BLITLINE_APPLICATION_ID'],
+                "src": {
+                    "name": "s3",
+                    "bucket": bucket_name,
+                    "key": image_name
+                },
+                "functions": [
+                    {
+                        "name": "resize_to_fit",
+                        "params": params,
+                        "save": {
+                            "image_identifier": image_name,
+                            "s3_destination": {
+                                "bucket": bucket_name,
+                                "key": "%s.%s" % (fn, ext)
+                            },
+                        }
+                    }
+                ]
+            }
+            r = requests.post(
+                "http://api.blitline.com/job",
+                data={
+                    'json': json.dumps(blit_job)})
+            app.logger.debug(r.text)
+        return redirect("%s%s.%s" % (url, fn, ext))
+    else:
+        return redirect("%s%s" % (url, image_name))
 
 
 def get_subset(config, subset_name):
