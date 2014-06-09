@@ -1,11 +1,16 @@
 import requests
 import math
 import json
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-v", "--verbose", help="print the JSON resp/req",
+                    action="store_true")
+args = parser.parse_args()
 
 # The URL for the admin interface
 base_url = "http://www.portphilio.com:5001"
 api_url = "%s%s" % (base_url, "/api/v1/")
-print_json_flag = False
 
 
 def print_color(string, status_code):
@@ -22,7 +27,7 @@ def print_color(string, status_code):
 
 
 def print_json(s, json_data):
-    if print_json_flag:
+    if args.verbose:
         print s
         print json.dumps(json_data, indent=4, separators=(',', ': '))
 
@@ -32,6 +37,10 @@ def get(url):
     '''
     r = requests.get(url, cookies=cookies)
     print_color("GET %s %s" % (url, r.status_code), r.status_code)
+    try :
+        print_json("RESPONSE: ", r.json())
+    except : # Not necessarily JSON...
+        pass
     return r
 
 
@@ -71,8 +80,9 @@ API-specific functions
 
 def login(credentials):
     'Logs into the API'
-    login_url = "%s%s" % (base_url, "/login/")
-    r = requests.post(login_url, data=credentials)
+    url = "%s%s" % (base_url, "/login/")
+    r = requests.post(url, data=credentials)
+    print_color("POST %s %s" % (url, r.status_code), r.status_code)
     return r.cookies
 
 
@@ -151,6 +161,12 @@ for work in works:
 
 # Add the work to the category
 put_succset(ins_id, {"succset": ins_works})
+
+
+# Now that everything is build, run some testing stuff
+get(api_url + "body/")
+get(api_url + "category/")
+get(api_url + "category/" + ins_id + "/")
 
 
 '''
