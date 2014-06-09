@@ -44,15 +44,16 @@ class Administrator(User):
     admin = BooleanField(default=True)
 
 
-class Subset(Document):
-    subset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
+class Vertex(Document):
+    succset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
+    predset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
     slug = StringField(required=True)
     title = StringField(required=True, verbose_name="Title")
     meta = {'allow_inheritance': True}
     owner = ReferenceField(User, required=True)
 
 
-class Medium(Subset):
+class Medium(Vertex):
     _expand_fields = []
 
 
@@ -68,23 +69,22 @@ class Audio(Medium):
     pass
 
 
-class Work(Subset):
-    _expand_fields = ['subset']
+class Work(Vertex):
+    _expand_fields = ['succset']
     medium = StringField(verbose_name="Medium")
     size = StringField(verbose_name="Size")
     date = StringField(verbose_name="Date created")
     description = LongStringField(verbose_name="Description")
 
 
-class Category(Subset):
-    _expand_fields = ['subset']
+class Category(Vertex):
+    _expand_fields = ['succset']
 
 
-class Tag(Subset):
+class Tag(Vertex):
     pass
 
 
-class Body(Document):
-    _expand_fields = ['subset']
-    subset = ListField(ReferenceField(Subset, reverse_delete_rule=PULL))
-    owner = ReferenceField(User, required=True)
+class Body(Vertex):
+    _expand_fields = ['succset']
+    source = BooleanField(default=True)

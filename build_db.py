@@ -5,11 +5,11 @@ def clear_db(username):
     u = User.objects.get(username=username)
 
     # Remove everything that the user owns
-    for doc in [Body, Medium, Subset]:
+    for doc in [Medium, Vertex]:
         doc.objects(owner=u).delete()
 
     # Create an empty Body (since there is no endpoint for this)
-    Body(subset=[], owner=u).save()
+    Body(owner=u, slug='', title='').save()
 
 def build_db(username):
     clear_db(username)
@@ -32,7 +32,7 @@ def build_db(username):
         size="13' x 4'",
         date="2010",
         description="Range is a manipulated photograph taken of a military proving ground in Nevada. The resolution of the photograph was deliberately modified multiple times and layered together in a composite image. The resulting photograph appears to have multiple resolutions determined by the viewing distance.\nCollaboration between Maggie Casey and Jeffrey Stockbridge.",
-        subset=range_media,
+        succset=range_media,
         owner=testuser).save()
     ins_dict_list = [
         {"title": "Gold Tooth", "slug": "gold-tooth"},
@@ -45,8 +45,7 @@ def build_db(username):
 
     ins_list = [range_work] + [Work(title=x['title'],
                                     slug=x['slug'],
-                                    owner=testuser,
-                                    subset=[]).save() for x in ins_dict_list]
+                                    owner=testuser,).save() for x in ins_dict_list]
 
     scu_dict_list = [
         {"title": "Breaker", "slug": "breaker"},
@@ -66,45 +65,45 @@ def build_db(username):
             owner=testuser).save() for x in scu_dict_list]
 
     scu_sub = Category(
-        subset=scu_list,
+        succset=scu_list,
         slug="sculpture",
         title="SCULPTURE",
         owner=testuser).save()
 
     ins_sub = Category(
-        subset=ins_list,
+        succset=ins_list,
         slug="installations",
         title="INSTALLATIONS",
         owner=testuser).save()
 
     body = Body.objects.get(owner=testuser)
-    body.subset = [ins_sub, scu_sub]
+    body.succset = [ins_sub, scu_sub]
     body.save()
 
     ## And now for some really crazy shit...
 
     # Add a work to the body
     bw = Work(title="Bodywork", slug="bodywork", owner=testuser).save()
-    body.subset = body.subset + [bw]
+    body.succset = body.succset + [bw]
     body.save()
 
     # Add a category to a category
     newcat = Category(slug="catsandkittens", title="CATegory", owner=testuser).save()
     ins = Category.objects.get(slug="installations", owner=testuser)
-    ins.subset = ins.subset + [newcat]
+    ins.succset = ins.succset + [newcat]
     ins.save()
 
     # Add a work to a category
-    ins.subset = ins.subset + [bw]
+    ins.succset = ins.succset + [bw]
     ins.save()
 
     # Add an existing category to the body
     newcat = Category.objects.get(slug="catsandkittens", owner=testuser)
-    body.subset = body.subset + [newcat]
+    body.succset = body.succset + [newcat]
     body.save()
 
     # Add a Work and a Category to a Work
     rang = Work.objects.get(owner=testuser, slug="range")
     newcat = Category.objects.get(slug="catsandkittens", owner=testuser)
-    rang.subset = rang.subset + [bw, newcat]
+    rang.succset = rang.succset + [bw, newcat]
     rang.save()

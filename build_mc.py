@@ -90,8 +90,8 @@ def post_photo(data):
     return r.json()["result"]["_id"]
 
 
-def put_subset(id, data):
-    r = put(api_url + "work/" + id + '/subset/', data=data)
+def put_succset(id, data):
+    r = put(api_url + "work/" + id + '/succset/', data=data)
     return r.json()
 
 
@@ -100,8 +100,8 @@ def post_cat(data):
     return r.json()["result"]["_id"]
 
 
-def put_body_subset(data):
-    r = put(api_url + "body/subset/", data=data)
+def put_body_vertex(data):
+    r = put(api_url + "body/succset/", data=data)
     return r.json()
 
 
@@ -116,7 +116,7 @@ ins_id = post_cat({"slug": "installations", "title": "INSTALLATIONS"})
 scu_id = post_cat({"slug": "sculpture", "title": "SCULPTURE"})
 
 # Put the categories into the body
-put_body_subset({"subset": [ins_id, scu_id]})
+put_body_vertex({"succset": [ins_id, scu_id]})
 
 # Create the Works
 works = [
@@ -142,15 +142,15 @@ for work in works:
     work_id = post_work(work["data"])
 
     # Create the photos
-    subset = [post_photo({"href": x}) for x in work["photos"]]
+    succset = [post_photo({"href": x}) for x in work["photos"]]
 
-    # Add the photos to the subset of the work
-    put_subset(work_id, {"subset": subset})
+    # Add the photos to the succset of the work
+    put_succset(work_id, {"succset": succset})
 
     ins_works.append(work_id)
 
 # Add the work to the category
-put_subset(ins_id, {"subset": ins_works})
+put_succset(ins_id, {"succset": ins_works})
 
 
 '''

@@ -9,7 +9,7 @@ from flask import jsonify, request, redirect
 from mongoengine.queryset import QuerySet
 from mongoengine import Document, StringField, fields
 from flask.ext.mongoengine import MongoEngine
-from portphilio_lib.models import Subset, Host, Work, LongStringField
+from portphilio_lib.models import *
 import requests
 import boto
 import json
@@ -84,8 +84,8 @@ def retrieve_image(image_name, user_name):
         return redirect("%s%s" % (url, image_name))
 
 
-def get_subset(config, subset_name):
-    return Subset.objects.get(slug=subset_name, owner=config["OWNER"])
+def get_vertex(config, vertex_name):
+    return Vertex.objects.get(slug=vertex_name, owner=config["OWNER"])
 
 
 def get_owner(host):
@@ -97,7 +97,7 @@ def get_owner(host):
 
 def get_work_from_slug(owner, slug):
     work = Work.objects.get(owner=owner, slug=slug)
-    return work, work.subset
+    return work, work.succset
 
 
 def bson_encode(obj):
