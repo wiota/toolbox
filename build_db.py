@@ -77,7 +77,9 @@ def build_db(username):
         title="INSTALLATIONS",
         owner=testuser).save()
 
-    body = Body(subset=[ins_sub, scu_sub], owner=testuser).save()
+    body = Body.objects.get(owner=testuser)
+    body.subset = [ins_sub, scu_sub]
+    body.save()
 
     ## And now for some really crazy shit...
 
