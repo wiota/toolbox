@@ -71,10 +71,10 @@ class Audio(Medium):
 
 class Work(Vertex):
     _expand_fields = ['succset']
+    description = LongStringField(verbose_name="Description")
+    date = StringField(verbose_name="Date created")
     medium = StringField(verbose_name="Medium")
     size = StringField(verbose_name="Size")
-    date = StringField(verbose_name="Date created")
-    description = LongStringField(verbose_name="Description")
 
 
 class Category(Vertex):

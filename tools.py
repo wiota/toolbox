@@ -2,6 +2,7 @@ import os
 import re
 import datetime
 import translitcodec
+from operator import itemgetter
 from urlparse import urlparse
 from bson.objectid import ObjectId
 from bson.dbref import DBRef
@@ -184,20 +185,24 @@ def document_to_dict(self, expand=True):
 
 
 def document_to_form(self):
+    """ Converts a document into a serialized form. Provides the necessary
+        attributes. Use's MongoEngine's `creation_counter` to order the list
+        before it is passed as JSON. The type_dict provides a one-to-one
+        correspondence between a MongoEngine field and an HTML field type.
+    """
     type_dict = {
         StringField.__name__: "text",
         LongStringField.__name__: "textarea"
     }
 
-    ret = {"formFields": {}}
-    for field in self._fields:
-        if type(self._fields[field]).__name__ in type_dict.keys():
-            if self._fields[field].verbose_name is not None:
-                ret["formFields"][self._fields[field].name] = {
-                    "label": self._fields[field].verbose_name,
-                    "required": self._fields[field].required,
-                    "type": type_dict[type(self._fields[field]).__name__]}
-    return jsonify(ret)
+    fields = ((v.creation_counter, v)
+              for k, v in self._fields.iteritems() if v.verbose_name)
+    sorted_fields = map(itemgetter(1), sorted(fields, key=itemgetter(0)))
+    field_list = [{"name": f.name,
+                   "label": f.verbose_name,
+                   "required": f.required,
+                   "type": type_dict[type(f).__name__]} for f in sorted_fields]
+    return jsonify(make_response(field_list))
 
 
 def update_document(document, data_dict):
