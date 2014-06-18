@@ -85,8 +85,8 @@ def retrieve_image(image_name, user_name):
         return redirect("%s%s" % (url, image_name))
 
 
-def get_vertex(config, vertex_name):
-    return Vertex.objects.get(slug=vertex_name, owner=config["OWNER"])
+def get_category(config, category_name):
+    return Category.objects.get(slug=category_name, owner=config["OWNER"])
 
 
 def get_owner(host):
