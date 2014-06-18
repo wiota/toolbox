@@ -100,8 +100,13 @@ def post_photo(data):
     return r.json()["result"]["_id"]
 
 
-def put_succset(id, data):
+def put_work_succset(id, data):
     r = put(api_url + "work/" + id + '/succset/', data=data)
+    return r.json()
+
+
+def put_cat_succset(id, data):
+    r = put(api_url + "category/" + id + '/succset/', data=data)
     return r.json()
 
 
@@ -155,12 +160,12 @@ for work in works:
     succset = [post_photo({"href": x}) for x in work["photos"]]
 
     # Add the photos to the succset of the work
-    put_succset(work_id, {"succset": succset})
+    put_work_succset(work_id, {"succset": succset})
 
     ins_works.append(work_id)
 
 # Add the work to the category
-put_succset(ins_id, {"succset": ins_works})
+put_cat_succset(ins_id, {"succset": ins_works})
 
 
 # Now that everything is build, run some testing stuff
