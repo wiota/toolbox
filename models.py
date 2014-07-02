@@ -1,10 +1,16 @@
-from flask_login import UserMixin
+from flask.ext.security import UserMixin, RoleMixin, login_required
 from mongoengine import *
 import bson
+import datetime
 
 
 class LongStringField(StringField):
     pass
+
+
+class Role(Document, RoleMixin):
+    name = StringField(max_length=80, unique=True)
+    description = StringField(max_length=255)
 
 
 class User(Document, UserMixin):
@@ -13,10 +19,13 @@ class User(Document, UserMixin):
         primary_key=True,
         default=lambda: bson.ObjectId())
     email = EmailField(required=True)
-    username = StringField(required=True, max_length=50)
-    password = StringField(required=True)
+    username = StringField(max_length=50)
+    password = StringField()
     admin = BooleanField(default=False)
     stripe_id = StringField()
+    confirmed = BooleanField(default=False)
+    confirmed_at = DateTimeField()
+    created_at = DateTimeField(default=datetime.datetime.now())
 
     meta = {'allow_inheritance': True}
 
@@ -28,6 +37,11 @@ class User(Document, UserMixin):
 
     def is_anonymous(self):
         return False
+
+    def activate(self):
+        self.confirmed = True
+        self.confirmed_at = datetime.datetime.now()
+        self.save()
 
 
 class Host(Document):

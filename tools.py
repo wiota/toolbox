@@ -6,15 +6,21 @@ from operator import itemgetter
 from urlparse import urlparse
 from bson.objectid import ObjectId
 from bson.dbref import DBRef
-from flask import jsonify, request, redirect
+from flask import g, jsonify, request, redirect, url_for, abort
 from mongoengine.queryset import QuerySet
 from mongoengine import Document, StringField, fields
 from flask.ext.mongoengine import MongoEngine
+from flask.ext.login import current_user, AnonymousUserMixin
 from portphilio_lib.models import *
+from functools import wraps
+from itsdangerous import URLSafeSerializer
 import requests
 import boto
 import json
 
+class AnonymousUser(AnonymousUserMixin):
+  def __init__(self):
+    self.admin = False
 
 # For slugify
 _punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
@@ -26,6 +32,15 @@ def initialize_db(flask_app):
         "DB": urlparse(MONGO_URL).path[1:],
         "host": MONGO_URL}
     return MongoEngine(flask_app)
+
+# Admin view decorator
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.admin:
+            abort(404)
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 def retrieve_image(image_name, user_name):
