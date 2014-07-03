@@ -107,6 +107,11 @@ def get_host_by_hostname(hostname):
         return None
 
 
+def get_category_from_slug(owner, slug):
+    cat = Category.objects.get(owner=owner, slug=slug)
+    return cat
+
+
 def get_work_from_slug(owner, slug):
     work = Work.objects.get(owner=owner, slug=slug)
     return work, work.succset
