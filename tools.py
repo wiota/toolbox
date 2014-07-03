@@ -101,12 +101,12 @@ def retrieve_image(image_name, user_name):
 
 
 def get_category(config, category_name):
-    return Category.objects.get(slug=category_name, owner=config["OWNER"])
+    return Category.objects.get(slug=category_name, owner=config["HOST"].owner)
 
 
-def get_owner(host):
+def get_host_by_hostname(hostname):
     try:
-        return Host.objects.get(hostname=host).owner
+        return Host.objects.get(hostname=hostname)
     except Host.DoesNotExist:
         return None
 

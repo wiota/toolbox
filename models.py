@@ -48,6 +48,7 @@ class Host(Document):
     hostname = StringField(required=True)
     bucketname = StringField(required=True)
     owner = ReferenceField(User, required=True)
+    template = StringField(required=True)
 
 
 class Client(User):
