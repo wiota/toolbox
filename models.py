@@ -61,6 +61,7 @@ class Administrator(User):
 class Vertex(Document):
     succset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
     predset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
+    cover = ReferenceField("self")
     slug = StringField(required=True)
     title = StringField(required=True, verbose_name="Title")
     meta = {'allow_inheritance': True}
