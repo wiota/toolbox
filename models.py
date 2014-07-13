@@ -68,6 +68,9 @@ class Vertex(Document):
     meta = {'allow_inheritance': True}
     owner = ReferenceField(User, required=True)
 
+    def get_save_fields(self):
+        return [k for k, v in Category._fields.iteritems() if type(v) is StringField]
+
 
 class Medium(Vertex):
     _expand_fields = []
