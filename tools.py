@@ -11,7 +11,7 @@ from mongoengine.queryset import QuerySet
 from mongoengine import Document, StringField, fields
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.login import current_user, AnonymousUserMixin
-from portphilio_lib.models import *
+from lime_lib.models import *
 from functools import wraps
 from itsdangerous import URLSafeSerializer
 import requests

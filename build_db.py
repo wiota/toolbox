@@ -1,4 +1,4 @@
-from portphilio_lib.models import *
+from lime_lib.models import *
 
 def clear_db(username):
     # Get the username
