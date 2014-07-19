@@ -38,7 +38,7 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.admin:
-            abort(404)
+            return redirect(url_for("root.index"))
         return f(*args, **kwargs)
     return decorated_function
 
