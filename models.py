@@ -43,13 +43,22 @@ class User(Document, UserMixin):
         self.confirmed_at = datetime.datetime.now()
         self.save()
 
+class CustomPage(EmbeddedDocument):
+    slug = StringField(required=True)
+    title = StringField(required=True)
+    content = StringField(required=True)
+    template_string = StringField(required=True)
 
 class Host(Document):
     hostname = StringField(required=True)
     bucketname = StringField(required=True)
     owner = ReferenceField(User, required=True)
     template = StringField(required=True)
+    custom_pages = ListField(GenericEmbeddedDocumentField(CustomPage))
 
+    def custom_from_slug(self, slug):
+        ret = [cp for cp in self.custom_pages if cp.slug == slug]
+        return ret[0] if ret else None
 
 class Client(User):
     hosts = ListField(ReferenceField(Host))
