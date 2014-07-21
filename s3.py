@@ -52,7 +52,7 @@ class s3_config():
             </CORSConfiguration>'''
 
     def get_policy(self, username):
-        return self.policy % {'username' : username, 'bucket' : os.environ['S3_BUCKET']
+        return self.policy % {'username' : username, 'bucket' : os.environ['S3_BUCKET']}
 
     def get_cors(self):
         return self.cors
