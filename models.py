@@ -1,9 +1,7 @@
 from flask.ext.security import UserMixin, RoleMixin, login_required
 from mongoengine import *
-from s3 import s3_config
 import bson
 import datetime
-import boto
 
 
 class LongStringField(StringField):
@@ -44,25 +42,6 @@ class User(Document, UserMixin):
         self.confirmed = True
         self.confirmed_at = datetime.datetime.now()
         self.save()
-
-    def build(self):
-        # Create the body
-        #TODO: Body doesn't need a slug or title
-        body = Body(owner=self.id, slug="", title="")
-        body.save()
-
-        # Create the S3 stuff
-        conn = boto.connect_s3()
-        bucket_name ='portphilio_%s' % self.username
-        bucket = conn.create_bucket(bucket_name)
-        s3_conf = s3_config()
-        bucket.set_policy(s3_conf.get_policy(self.username))
-        bucket.set_cors_xml(s3_conf.get_cors())
-
-        # Create the host
-        # TODO: Where does the hostname get set?
-        host = Host(hostname="foo.com", bucketname=bucket_name, owner=self.id)
-        host.save
 
 
 class Host(Document):
