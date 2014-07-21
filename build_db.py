@@ -1,4 +1,4 @@
-from lime_lib.models import *
+from toolbox.models import *
 
 def clear_db(username):
     # Get the username

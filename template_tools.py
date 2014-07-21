@@ -1,4 +1,4 @@
-from lime_lib.models import *
+from toolbox.models import *
 
 def get_category(config, category_name):
     return Category.objects.get(slug=category_name, owner=config["HOST"].owner)
