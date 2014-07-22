@@ -4,50 +4,52 @@ class s3_config():
 
     def __init__(self):
         self.policy = '''{
-                "Version": "2008-10-17",
-                "Id": "Policy1400263641985",
-                "Statement": [
-                    {
-                        "Sid": "Stmt1400263639958",
-                        "Effect": "Allow",
-                        "Principal": {
-                            "AWS": "arn:aws:iam::984987636045:user/%(bucket)s"
-                        },
-                        "Action": "s3:*",
-                        "Resource": "arn:aws:s3:::%(bucket)s_%(username)s/*"
+            "Version": "2008-10-17",
+            "Id": "Policy1400263641985",
+            "Statement": [
+                {
+                    "Sid": "Stmt1400263639958",
+                    "Effect": "Allow",
+                    "Principal": {
+                        "AWS": "arn:aws:iam::984987636045:user/%(bucket)s"
                     },
-                    {
-                        "Sid": "AddCannedAcl",
-                        "Effect": "Allow",
-                        "Principal": {
-                            "AWS": "arn:aws:iam::613648124410:root"
-                        },
-                        "Action": [
-                            "s3:PutObjectAcl",
-                            "s3:GetObject",
-                            "s3:PutObject"
-                        ],
-                        "Resource": "arn:aws:s3:::%(bucket)s_%(username)s/*"
+                    "Action": "s3:*",
+                    "Resource": "arn:aws:s3:::%(bucket)s_%(username)s/*"
+                },
+                {
+                    "Sid": "AddCannedAcl",
+                    "Effect": "Allow",
+                    "Principal": {
+                        "AWS": "arn:aws:iam::613648124410:root"
                     },
-                    {
-                        "Sid": "Stmt1402260824580",
-                        "Effect": "Allow",
-                        "Principal": {
-                            "AWS": "*"
-                        },
-                        "Action": [
-                            "s3:GetObject"
-                        ],
-                        "Resource": "arn:aws:s3:::%(bucket)s_%(username)s/*"
-                    }
-                ]
-            }'''
-        self.cors = '''<CORSConfiguration>
+                    "Action": [
+                        "s3:PutObjectAcl",
+                        "s3:GetObject",
+                        "s3:PutObject"
+                    ],
+                    "Resource": "arn:aws:s3:::%(bucket)s_%(username)s/*"
+                },
+                {
+                    "Sid": "Stmt1402260824580",
+                    "Effect": "Allow",
+                    "Principal": {
+                        "AWS": "*"
+                    },
+                    "Action": [
+                        "s3:GetObject"
+                    ],
+                    "Resource": "arn:aws:s3:::%(bucket)s_%(username)s/*"
+                }
+            ]
+        }'''
+        self.cors = '''<?xml version="1.0" encoding="UTF-8"?>
+            <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
                 <CORSRule>
                     <AllowedOrigin>*</AllowedOrigin>
                     <AllowedMethod>GET</AllowedMethod>
-                    <MaxAgeSeconds>3000</MaxAgeSeconds>
-                    <AllowedHeader>Authorization</AllowedHeader>
+                    <AllowedMethod>POST</AllowedMethod>
+                    <AllowedMethod>PUT</AllowedMethod>
+                    <AllowedHeader>*</AllowedHeader>
                 </CORSRule>
             </CORSConfiguration>'''
 
