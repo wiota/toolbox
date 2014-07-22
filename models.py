@@ -55,6 +55,8 @@ class Host(Document):
     owner = ReferenceField(User, required=True)
     custom_pages = ListField(GenericEmbeddedDocumentField(CustomPage))
     template = StringField()
+    title = StringField()
+    subtitle = StringField()
 
     def custom_from_slug(self, slug):
         ret = [cp for cp in self.custom_pages if cp.slug == slug]
