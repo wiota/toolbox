@@ -53,8 +53,8 @@ class Host(Document):
     hostname = StringField(required=True)
     bucketname = StringField(required=True)
     owner = ReferenceField(User, required=True)
-    template = StringField(required=True)
     custom_pages = ListField(GenericEmbeddedDocumentField(CustomPage))
+    template = StringField()
 
     def custom_from_slug(self, slug):
         ret = [cp for cp in self.custom_pages if cp.slug == slug]
