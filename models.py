@@ -50,10 +50,10 @@ class CustomPage(EmbeddedDocument):
     template_string = StringField(required=True)
 
 class Host(Document):
-    hostname = StringField(required=True)
     bucketname = StringField(required=True)
     owner = ReferenceField(User, required=True)
     custom_pages = ListField(GenericEmbeddedDocumentField(CustomPage))
+    hostname = StringField()
     template = StringField()
     title = StringField()
     subtitle = StringField()
