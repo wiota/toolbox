@@ -25,6 +25,7 @@ class User(Document, UserMixin):
     stripe_id = StringField()
     confirmed = BooleanField(default=False)
     confirmed_at = DateTimeField()
+    registered = BooleanField(default=False)
     created_at = DateTimeField(default=datetime.datetime.now())
 
     meta = {'allow_inheritance': True}
