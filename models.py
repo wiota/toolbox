@@ -45,9 +45,11 @@ class User(Document, UserMixin):
         self.confirmed_at = datetime.datetime.now()
         self.save()
 
-class CustomPage(EmbeddedDocument):
+class Sluggable(object):
     slug = StringField(required=True)
-    title = StringField(required=True)
+    title = StringField(required=True, verbose_name="Title")
+
+class CustomPage(EmbeddedDocument, Sluggable):
     content = StringField(required=True)
     template_string = StringField(required=True)
 
@@ -76,8 +78,6 @@ class Vertex(Document):
     succset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
     predset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
     cover = ReferenceField("self")
-    slug = StringField(required=True)
-    title = StringField(required=True, verbose_name="Title")
     meta = {'allow_inheritance': True}
     owner = ReferenceField(User, required=True)
 
@@ -101,7 +101,7 @@ class Audio(Medium):
     pass
 
 
-class Work(Vertex):
+class Work(Vertex, Sluggable):
     _expand_fields = ['succset']
     description = LongStringField(verbose_name="Description")
     date = StringField(verbose_name="Date created")
@@ -109,7 +109,7 @@ class Work(Vertex):
     size = StringField(verbose_name="Size")
 
 
-class Category(Vertex):
+class Category(Vertex, Sluggable):
     _expand_fields = ['succset']
 
 
