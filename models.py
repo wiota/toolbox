@@ -27,6 +27,7 @@ class User(Document, UserMixin):
     confirmed_at = DateTimeField()
     registered = BooleanField(default=False)
     created_at = DateTimeField(default=datetime.datetime.now())
+    email_hash = StringField()
 
     meta = {'allow_inheritance': True}
 
