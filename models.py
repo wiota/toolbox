@@ -117,6 +117,20 @@ class Tag(Vertex):
     pass
 
 
-class Body(Vertex):
-    _expand_fields = ['succset']
+class Apex(Vertex):
     source = BooleanField(default=True)
+
+
+class Body(Apex):
+    _expand_fields = ['succset']
+
+
+class EventApex(Vertex):
+    _expand_fields = ['succset']
+
+
+class Event(Vertex, Sluggable):
+    _expand_fields = []
+    location = StringField(verbose_name="Location")
+    start_date = StringField(verbose_name="Start date", required=True)
+    end_date = StringField(verbose_name="End date (optional)")
