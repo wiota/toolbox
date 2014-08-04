@@ -131,6 +131,8 @@ class Happenings(Apex):
 
 class Happening(Vertex, Sluggable):
     _expand_fields = []
+    description = LongStringField(verbose_name="Description")
     location = StringField(verbose_name="Location")
-    start_date = StringField(verbose_name="Start date", required=True)
-    end_date = StringField(verbose_name="End date (optional)")
+    date_string = StringField(verbose_name="Date string")
+    start_date = DateTimeField(verbose_name="Start date (optional)")
+    end_date = DateTimeField(verbose_name="End date (optional)")

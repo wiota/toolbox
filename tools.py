@@ -208,7 +208,8 @@ def document_to_form(self):
     """
     type_dict = {
         StringField.__name__: "text",
-        LongStringField.__name__: "textarea"
+        LongStringField.__name__: "textarea",
+        DateTimeField.__name__: "datetime-local"
     }
 
     fields = ((v.creation_counter, v)
