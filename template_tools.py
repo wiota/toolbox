@@ -10,5 +10,5 @@ def get_page(config, page_name):
     pages = config["HOST"].custom_pages
     return filter(lambda x: x.slug == page_name, pages)[0]
 
-def get_events(config):
-    return Event.objects(owner=config["HOST"].owner)
+def get_happenings(config):
+    return Happening.objects(owner=config["HOST"].owner)
