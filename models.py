@@ -50,8 +50,8 @@ class Sluggable(object):
     title = StringField(required=True, verbose_name="Title")
 
 class CustomPage(EmbeddedDocument, Sluggable):
-    content = StringField(required=True)
     template_string = StringField(required=True)
+    content = StringField()
 
 class Host(Document):
     bucketname = StringField(required=True)
@@ -133,6 +133,7 @@ class Happening(Vertex, Sluggable):
     _expand_fields = []
     description = LongStringField(verbose_name="Description")
     location = StringField(verbose_name="Location")
+    link = UrlField(verbose_name="Link")
     date_string = StringField(verbose_name="Date string")
-    start_date = DateTimeField(verbose_name="Start date (optional)")
-    end_date = DateTimeField(verbose_name="End date (optional)")
+    start_date = DateTimeField(verbose_name="Start date")
+    end_date = DateTimeField(verbose_name="End date")
