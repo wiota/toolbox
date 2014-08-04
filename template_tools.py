@@ -6,3 +6,6 @@ def get_category(config, category_name):
 def get_body(config):
     return Body.objects.get(owner=config["HOST"].owner)
 
+def get_page(config, page_name):
+    pages = config["HOST"].custom_pages
+    return filter(lambda x: x.slug == page_name, pages)[0]
