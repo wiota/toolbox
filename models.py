@@ -125,11 +125,11 @@ class Body(Apex):
     _expand_fields = ['succset']
 
 
-class EventApex(Vertex):
+class Happenings(Apex):
     _expand_fields = ['succset']
 
 
-class Event(Vertex, Sluggable):
+class Happening(Vertex, Sluggable):
     _expand_fields = []
     location = StringField(verbose_name="Location")
     start_date = StringField(verbose_name="Start date", required=True)
