@@ -14,7 +14,6 @@ class Role(Document, RoleMixin):
 
 
 class User(Document, UserMixin):
-    _expand_fields = []
     id = ObjectIdField(
         primary_key=True,
         default=lambda: bson.ObjectId())
@@ -86,8 +85,7 @@ class Vertex(Document):
 
 
 class Medium(Vertex):
-    _expand_fields = []
-
+    pass
 
 class Photo(Medium):
     href = StringField(required=True)
@@ -113,8 +111,8 @@ class Category(Vertex, Sluggable):
     _expand_fields = ['succset']
 
 
-class Tag(Vertex):
-    pass
+class Tag(Vertex, Sluggable):
+    _expand_fields = ['succset']
 
 
 class Apex(Vertex):
@@ -130,7 +128,6 @@ class Happenings(Apex):
 
 
 class Happening(Vertex, Sluggable):
-    _expand_fields = []
     description = LongStringField(verbose_name="Description")
     location = StringField(verbose_name="Location")
     link = URLField(verbose_name="Link")

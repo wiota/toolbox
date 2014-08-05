@@ -196,7 +196,7 @@ def document_to_bson(self, expand=True):
 def document_to_dict(self, expand=True):
     """ Converts a document into a dictionary, expanding fields as supplied.
     """
-    expand_fields = self._expand_fields if expand else []
+    expand_fields = getattr(self, "_expand_fields", []) if expand else []
     return to_dict(self.select_related(), expand_fields)
 
 
