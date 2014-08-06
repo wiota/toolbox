@@ -1,4 +1,5 @@
 from toolbox.models import *
+from time import strftime, localtime
 
 def get_category(config, category_name):
     return Category.objects.get(slug=category_name, owner=config["HOST"].owner)
@@ -15,3 +16,9 @@ def get_happenings(config):
 
 def get_tag(config, tag_name):
     return Tag.objects.get(slug=tag_name, owner=config["HOST"].owner).succset
+
+def format_date(value):
+    return strftime("%b %d %Y", localtime(int("1407273479")))
+
+def format_money(value):
+    return "$%.2f" % (value/100.0)
