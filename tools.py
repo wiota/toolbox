@@ -1,5 +1,4 @@
 import os
-import re
 import datetime
 import translitcodec
 from operator import itemgetter
@@ -21,9 +20,6 @@ class AnonymousUser(AnonymousUserMixin):
   def __init__(self):
     self.admin = False
 
-# For slugify
-_punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
-
 
 def initialize_db(flask_app):
     MONGO_URL = os.environ.get('MONGOHQ_URL')
@@ -31,6 +27,7 @@ def initialize_db(flask_app):
         "DB": urlparse(MONGO_URL).path[1:],
         "host": MONGO_URL}
     return MongoEngine(flask_app)
+
 
 # Admin view decorator
 def admin_required(f):
@@ -121,17 +118,6 @@ def make_response(ret=''):
         return as BSON.
     """
     return {"result": ret}
-
-
-def slugify(text, delim=u'-'):
-    """ Turns any string (e.g., a title) into a URL-able ASCII-only slug.
-    """
-    result = []
-    for word in _punct_re.split(text.lower()):
-        word = word.encode('translit/long')
-        if word:
-            result.append(word)
-    return unicode(delim.join(result))
 
 
 def document_to_form(self):

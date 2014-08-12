@@ -2,6 +2,35 @@ from flask.ext.security import UserMixin, RoleMixin, login_required
 from mongoengine import *
 import bson
 import datetime
+import re
+from mongoengine import signals
+
+# For slugify
+_punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
+
+def handler(event):
+    """Signal decorator to allow use of callback functions as class decorators."""
+    def decorator(fn):
+        def apply(cls):
+            event.connect(fn, sender=cls)
+            return cls
+        fn.apply = apply
+        return fn
+    return decorator
+
+@handler(signals.pre_save)
+def slugify(sender, document):
+    result = []
+    for word in _punct_re.split(document.title.lower()):
+        word = word.encode('translit/long')
+        if word:
+            result.append(word)
+    slug = slug_attempt = unicode('-'.join(result))
+    count = 1
+    while sender.objects(**{"slug": slug_attempt, "owner": document.owner}).count() > 0:
+        slug_attempt = slug + '-%s' % count
+        count += 1
+    document.slug = slug_attempt
 
 
 class LongStringField(StringField):
@@ -48,6 +77,8 @@ class Sluggable(object):
     slug = StringField(required=True)
     title = StringField(required=True, verbose_name="Title")
 
+
+@slugify.apply
 class CustomPage(EmbeddedDocument, Sluggable):
     template_string = StringField(required=True)
     content = StringField()
@@ -99,6 +130,7 @@ class Audio(Medium):
     pass
 
 
+@slugify.apply
 class Work(Vertex, Sluggable):
     _expand_fields = ['succset']
     description = LongStringField(verbose_name="Description")
@@ -107,10 +139,12 @@ class Work(Vertex, Sluggable):
     size = StringField(verbose_name="Size")
 
 
+@slugify.apply
 class Category(Vertex, Sluggable):
     _expand_fields = ['succset']
 
 
+@slugify.apply
 class Tag(Vertex, Sluggable):
     _expand_fields = ['succset']
 
@@ -127,6 +161,7 @@ class Happenings(Apex):
     _expand_fields = ['succset']
 
 
+@slugify.apply
 class Happening(Vertex, Sluggable):
     description = LongStringField(verbose_name="Description")
     location = StringField(verbose_name="Location")
