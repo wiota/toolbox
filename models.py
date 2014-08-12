@@ -106,6 +106,7 @@ class Administrator(User):
 
 
 class Vertex(Document):
+    _expand_fields = ['succset', 'cover']
     succset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
     predset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
     cover = ReferenceField("self")
@@ -133,7 +134,6 @@ class Audio(Medium):
 
 @slugify.apply
 class Work(Vertex, Sluggable):
-    _expand_fields = ['succset']
     description = LongStringField(verbose_name="Description")
     date = StringField(verbose_name="Date created")
     medium = StringField(verbose_name="Medium")
@@ -142,12 +142,12 @@ class Work(Vertex, Sluggable):
 
 @slugify.apply
 class Category(Vertex, Sluggable):
-    _expand_fields = ['succset']
+    pass
 
 
 @slugify.apply
 class Tag(Vertex, Sluggable):
-    _expand_fields = ['succset']
+    pass
 
 
 class Apex(Vertex):
@@ -155,11 +155,11 @@ class Apex(Vertex):
 
 
 class Body(Apex):
-    _expand_fields = ['succset']
+    pass
 
 
 class Happenings(Apex):
-    _expand_fields = ['succset']
+    pass
 
 
 @slugify.apply
