@@ -173,3 +173,4 @@ def update_document(document, data_dict):
     return document
 
 setattr(Document, 'to_form', document_to_form)
+setattr(EmbeddedDocument, 'to_form', document_to_form)

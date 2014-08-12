@@ -81,7 +81,7 @@ class Sluggable(object):
 @slugify.apply
 class CustomPage(EmbeddedDocument, Sluggable):
     template_string = StringField(required=True)
-    content = StringField()
+    content = StringField(verbose_name="Content")
 
 class Host(Document):
     bucketname = StringField(required=True)
