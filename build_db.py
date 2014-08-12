@@ -88,22 +88,27 @@ def build_db(username):
     body.save()
 
     # Add a category to a category
-    newcat = Category(slug="catsandkittens", title="CATegory", owner=testuser).save()
+    newcat = Category(title="Cats and Kittens", owner=testuser).save()
     ins = Category.objects.get(slug="installations", owner=testuser)
     ins.succset = ins.succset + [newcat]
     ins.save()
+
+    # Slugtest
+    slugcat = Category(title="CATS!!! AND!!! KITTENS!!!", owner=testuser).save()
+    body.succset = body.succset + [slugcat]
+    body.save()
 
     # Add a work to a category
     ins.succset = ins.succset + [bw]
     ins.save()
 
     # Add an existing category to the body
-    newcat = Category.objects.get(slug="catsandkittens", owner=testuser)
+    newcat = Category.objects.get(slug="cats-and-kittens", owner=testuser)
     body.succset = body.succset + [newcat]
     body.save()
 
     # Add a Work and a Category to a Work
     rang = Work.objects.get(owner=testuser, slug="range")
-    newcat = Category.objects.get(slug="catsandkittens", owner=testuser)
+    newcat = Category.objects.get(slug="cats-and-kittens", owner=testuser)
     rang.succset = rang.succset + [bw, newcat]
     rang.save()
