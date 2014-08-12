@@ -20,17 +20,18 @@ def handler(event):
 
 @handler(signals.pre_save)
 def slugify(sender, document):
-    result = []
-    for word in _punct_re.split(document.title.lower()):
-        word = word.encode('translit/long')
-        if word:
-            result.append(word)
-    slug = slug_attempt = unicode('-'.join(result))
-    count = 1
-    while sender.objects(**{"slug": slug_attempt, "owner": document.owner}).count() > 0:
-        slug_attempt = slug + '-%s' % count
-        count += 1
-    document.slug = slug_attempt
+    if document.id is None:
+        result = []
+        for word in _punct_re.split(document.title.lower()):
+            word = word.encode('translit/long')
+            if word:
+                result.append(word)
+        slug = slug_attempt = unicode('-'.join(result))
+        count = 1
+        while sender.objects(**{"slug": slug_attempt, "owner": document.owner}).count() > 0:
+            slug_attempt = slug + '-%s' % count
+            count += 1
+        document.slug = slug_attempt
 
 
 class LongStringField(StringField):
