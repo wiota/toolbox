@@ -109,7 +109,7 @@ class Vertex(Document):
     _expand_fields = ['succset', 'cover']
     succset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
     predset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
-    cover = ReferenceField("self")
+    cover = ListField(ReferenceField("self", reverse_delete_rule=PULL))
     meta = {'allow_inheritance': True}
     owner = ReferenceField(User, required=True)
 
