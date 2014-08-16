@@ -11,10 +11,10 @@ class s3_config():
                     "Sid": "Stmt1400263639958",
                     "Effect": "Allow",
                     "Principal": {
-                        "AWS": "arn:aws:iam::984987636045:user/%(bucket)s"
+                        "AWS": "arn:aws:iam::984987636045:user/portphilio"
                     },
                     "Action": "s3:*",
-                    "Resource": "arn:aws:s3:::%(bucket)s_%(username)s/*"
+                    "Resource": "arn:aws:s3:::%(bucket)s_%(email_hash)s/*"
                 },
                 {
                     "Sid": "AddCannedAcl",
@@ -27,7 +27,7 @@ class s3_config():
                         "s3:GetObject",
                         "s3:PutObject"
                     ],
-                    "Resource": "arn:aws:s3:::%(bucket)s_%(username)s/*"
+                    "Resource": "arn:aws:s3:::%(bucket)s_%(email_hash)s/*"
                 },
                 {
                     "Sid": "Stmt1402260824580",
@@ -38,7 +38,7 @@ class s3_config():
                     "Action": [
                         "s3:GetObject"
                     ],
-                    "Resource": "arn:aws:s3:::%(bucket)s_%(username)s/*"
+                    "Resource": "arn:aws:s3:::%(bucket)s_%(email_hash)s/*"
                 }
             ]
         }'''
@@ -53,8 +53,8 @@ class s3_config():
                 </CORSRule>
             </CORSConfiguration>'''
 
-    def get_policy(self, username):
-        return self.policy % {'username' : username, 'bucket' : os.environ['S3_BUCKET']}
+    def get_policy(self, email_hash):
+        return self.policy % {'email_hash' : email_hash, 'bucket' : os.environ['S3_BUCKET']}
 
     def get_cors(self):
         return self.cors
