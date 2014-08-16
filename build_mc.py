@@ -121,7 +121,7 @@ def put_body_vertex(data):
 
 
 # Login
-cookies = login({"username": "maggiecasey", "password": "a"})
+cookies = login({"email": "test_email_address@maggiecasey.com", "password": "a"})
 
 # Clear the database
 clear_db()

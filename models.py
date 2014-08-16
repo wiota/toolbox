@@ -48,7 +48,6 @@ class User(Document, UserMixin):
         primary_key=True,
         default=lambda: bson.ObjectId())
     email = EmailField(required=True)
-    username = StringField(max_length=50)
     password = StringField()
     admin = BooleanField(default=False)
     stripe_id = StringField()

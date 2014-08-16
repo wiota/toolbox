@@ -1,22 +1,14 @@
 from toolbox.models import *
 
-def clear_db(username):
-    # Get the username
-    u = User.objects.get(username=username)
-
+def clear_db(testuser):
     # Remove everything that the user owns
     for doc in [Medium, Vertex]:
-        doc.objects(owner=u).delete()
+        doc.objects(owner=testuser).delete()
 
     # Create an empty Body (since there is no endpoint for this)
-    Body(owner=u, slug='', title='').save()
+    Body(owner=testuser, slug='', title='').save()
 
-def build_db(username):
-    clear_db(username)
-
-    # Get the user object
-    testuser = User.objects.get(username=username)
-
+def build_db(testuser):
     range_urls = [
         "/image/TrainFromTurmoilToHappyClouds.jpg",
         "/image/Rangeweb01.jpg",
