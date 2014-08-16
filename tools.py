@@ -39,8 +39,8 @@ def admin_required(f):
     return decorated_function
 
 
-def retrieve_image(image_name, user_name):
-    bucket_name = "%s_%s" % (os.environ['S3_BUCKET'], user_name)
+def retrieve_image(image_name, email_hash):
+    bucket_name = "%s_%s" % (os.environ['S3_BUCKET'], email_hash)
     size = request.args.to_dict()
     w = size.get('w', None)
     h = size.get('h', None)
