@@ -87,8 +87,8 @@ class CustomPage(EmbeddedDocument, Sluggable):
 class Host(Document):
     bucketname = StringField(required=True)
     owner = ReferenceField(User, required=True)
+    hostname = StringField(required=True)
     custom_pages = ListField(GenericEmbeddedDocumentField(CustomPage))
-    hostname = StringField()
     template = StringField()
     title = StringField()
     subtitle = StringField()
