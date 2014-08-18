@@ -11,3 +11,11 @@ def send_email(to, subject, html):
         "html" : html
     }
     r = requests.post(url, auth=auth, data=payload)
+
+def send_exception(exception, traceback):
+    subject = "ERROR: %s" % (exception)
+    tb = "<br/>".join(traceback.format_exc().split('\n'))
+    tb = tb.replace(' ', '&nbsp;')
+    html = "<code style='display:block; font-size: 13px; width:800px'>%s</code>" % tb
+    to = ["di@wiota.co", "rh@wiota.co"]
+    send_email(to, subject, html)
