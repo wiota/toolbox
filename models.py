@@ -105,10 +105,10 @@ class Administrator(User):
 
 
 class Vertex(Document):
-    _expand_fields = ['succset', 'cover']
+    _expand_fields = ['succset']
     succset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
     predset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
-    cover = ListField(ReferenceField("self", reverse_delete_rule=PULL))
+    cover = ListField()
     deletable = BooleanField(default=True)
     public = BooleanField(default=True)
     meta = {'allow_inheritance': True}
