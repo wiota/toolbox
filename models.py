@@ -109,6 +109,8 @@ class Vertex(Document):
     succset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
     predset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
     cover = ListField(ReferenceField("self", reverse_delete_rule=PULL))
+    deletable = BooleanField(default=True)
+    public = BooleanField(default=True)
     meta = {'allow_inheritance': True}
     owner = ReferenceField(User, required=True)
 
