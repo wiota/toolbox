@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+    <table class="main" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <td class="content-wrap">
+                <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td class="content-block">
+                            {{ content }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="content-block">
+                            <a href="{{ link_href }}" class="btn-primary">{{ link_text }}</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="content-block">
+                            &mdash; Ryan &amp; Dustin @ <a href="http://wiota.co">http://wiota.co</a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+{% endblock %}
+
+{% block footer %}
+    <table width="100%">
+        <tr>
+            <td class="aligncenter content-block">Questions? <a href="mailto:rh@wiota.co,di@wiota.co">Email us</a>.</td>
+        </tr>
+    </table>
+{% endblock %}
