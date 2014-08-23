@@ -2,6 +2,7 @@ import os
 import requests
 from jinja2 import Environment, PackageLoader
 from premailer import transform
+import json
 
 
 class Email(object):
@@ -47,8 +48,18 @@ class BillingEmail(Email):
 class ExceptionEmail(Email):
 
     def __init__(self, exception, traceback):
-        self.subject = "ERROR: %s" % (exception)
+        self.subject = "[lime][ERROR] %s" % (exception)
         tb = "<br/>".join(traceback.split('\n'))
         tb = tb.replace(' ', '&nbsp;')
         self.html = "<code style='display:block; font-size: 13px; width:800px'>%s</code>" % tb
+        self.to = ["di@wiota.co", "rh@wiota.co"]
+
+class StripeEmail(Email):
+
+    def __init__(self, event):
+        self.subject = "[lime][stripe] %s" % (event["type"])
+        data = json.dumps(event, sort_keys=True, indent=4, separators=(',', ': '))
+        data = data.replace('\n','<br />')
+        data = data.replace(' ','&nbsp;')
+        self.html = "<code style='display:block; font-size: 13px; width:800px'>%s</code>" % (data)
         self.to = ["di@wiota.co", "rh@wiota.co"]
