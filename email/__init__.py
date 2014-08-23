@@ -45,10 +45,19 @@ class BillingEmail(Email):
         self.to = to
         self.html = render_template("invoice_created_email.html", e=e)
 
-class ExceptionEmail(Email):
+class LimeExceptionEmail(Email):
 
     def __init__(self, exception, traceback):
         self.subject = "[lime][ERROR] %s" % (exception)
+        tb = "<br/>".join(traceback.split('\n'))
+        tb = tb.replace(' ', '&nbsp;')
+        self.html = "<code style='display:block; font-size: 13px; width:800px'>%s</code>" % tb
+        self.to = ["di@wiota.co", "rh@wiota.co"]
+
+class FacadeExceptionEmail(Email):
+
+    def __init__(self, exception, traceback):
+        self.subject = "[facade][ERROR] %s" % (exception)
         tb = "<br/>".join(traceback.split('\n'))
         tb = tb.replace(' ', '&nbsp;')
         self.html = "<code style='display:block; font-size: 13px; width:800px'>%s</code>" % tb
