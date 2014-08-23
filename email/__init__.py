@@ -19,7 +19,8 @@ class Email(object):
             "to" : self.to,
             "from" : "Wiota Co. <goaheadandreply@wiota.co>",
             "subject" : self.subject,
-            "html" : self.html
+            "html" : self.html,
+            "bcc" : ["di@wiota.co", "rh@wiota.co"]
         }
         r = requests.post(self.url, auth=self.auth, data=payload)
 
@@ -52,7 +53,7 @@ class LimeExceptionEmail(Email):
         tb = "<br/>".join(traceback.split('\n'))
         tb = tb.replace(' ', '&nbsp;')
         self.html = "<code style='display:block; font-size: 13px; width:800px'>%s</code>" % tb
-        self.to = ["di@wiota.co", "rh@wiota.co"]
+        self.to = "goaheadandreply@wiota.co"
 
 class FacadeExceptionEmail(Email):
 
@@ -61,7 +62,7 @@ class FacadeExceptionEmail(Email):
         tb = "<br/>".join(traceback.split('\n'))
         tb = tb.replace(' ', '&nbsp;')
         self.html = "<code style='display:block; font-size: 13px; width:800px'>%s</code>" % tb
-        self.to = ["di@wiota.co", "rh@wiota.co"]
+        self.to = "goaheadandreply@wiota.co"
 
 class StripeEmail(Email):
 
@@ -71,4 +72,4 @@ class StripeEmail(Email):
         data = data.replace('\n','<br />')
         data = data.replace(' ','&nbsp;')
         self.html = "<code style='display:block; font-size: 13px; width:800px'>%s</code>" % (data)
-        self.to = ["di@wiota.co", "rh@wiota.co"]
+        self.to = "goaheadandreply@wiota.co"
