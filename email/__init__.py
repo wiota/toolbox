@@ -32,8 +32,12 @@ class ActionEmail(Email):
         self.to = to
         self.html = template.render(content=content, link_text=link_text, link_href=link_href)
 
-class AlertEmail(Email):
-    pass
+class AdminAlertEmail(Email):
+
+    def __init__(self, subject, body):
+        self.subject = "[lime][alert] %s" % (subject)
+        self.html = body
+        self.to = "goaheadandreply@wiota.co"
 
 class BillingEmail(Email):
 
