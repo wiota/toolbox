@@ -2,6 +2,7 @@ import os
 import requests
 from jinja2 import Environment, PackageLoader
 from premailer import transform
+from toolbox.template_tools import format_date, format_money
 import json
 
 
@@ -9,6 +10,8 @@ class Email(object):
     url = "https://api.mailgun.net/v2/wiota.co/messages"
     auth = ('api', os.environ.get('MAILGUN_API_KEY'))
     env = Environment(loader=PackageLoader('toolbox.email', 'views'))
+    env.filters["money"] = format_money
+    env.filters["date"] = format_date
 
     def __init__(self):
         pass
@@ -49,6 +52,14 @@ class BillingEmail(Email):
         self.subject = "Wiota Co. - Invoice (%s)" % date
         self.to = to
         self.html = render_template("invoice_created_email.html", e=e)
+
+class ReceiptEmail(Email):
+
+    def __init__(self, to, invoice, stripe_event, link):
+        self.subject = "Wiota Co. - Receipt (%s)" % format_date(invoice.period_end)
+        self.to = to
+        template = self.env.get_template('billing.html')
+        self.html = template.render(link=link, to=to, invoice=invoice, stripe_event=stripe_event)
 
 class LimeExceptionEmail(Email):
 
