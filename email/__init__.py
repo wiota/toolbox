@@ -82,7 +82,8 @@ class FacadeExceptionEmail(Email):
 class StripeEmail(Email):
 
     def __init__(self, event):
-        self.subject = "[lime][stripe] %s" % (event["type"])
+        mode = "live" if event["livemode"] else "test"
+        self.subject = "[lime][stripe-%s] %s" % (mode, event["type"])
         data = json.dumps(event, sort_keys=True, indent=4, separators=(',', ': '))
         data = data.replace('\n','<br />')
         data = data.replace(' ','&nbsp;')
