@@ -20,18 +20,34 @@ def handler(event):
 
 @handler(signals.pre_save)
 def slugify(sender, document):
-    if document.id is None:
-        result = []
-        for word in _punct_re.split(document.title.lower()):
-            word = word.encode('translit/long')
-            if word:
-                result.append(word)
-        slug = slug_attempt = unicode('-'.join(result))
-        count = 1
-        while sender.objects(**{"slug": slug_attempt, "owner": document.owner}).count() > 0:
-            slug_attempt = slug + '-%s' % count
-            count += 1
-        document.slug = slug_attempt
+    ''' Create a document's slug from its title. '''
+
+    result = []
+
+    # Extract the words
+    for word in _punct_re.split(document.title.lower()):
+
+        # Encode all special characters
+        word = word.encode('translit/long')
+
+        # Check if anyting is left of the word
+        if word:
+            # Add to results
+            result.append(word)
+
+    # Check if there is anything at all in the result
+    if not result:
+        result.append("untitled") # A default slug
+
+    # Join the slug words together
+    slug = slug_attempt = unicode('-'.join(result))
+    count = 1
+
+    # Check for collisions
+    while sender.objects(**{"slug": slug_attempt, "owner": document.owner}).count() > 0:
+        slug_attempt = slug + '-%s' % count
+        count += 1 # Iterate
+    document.slug = slug_attempt
 
 
 class LongStringField(StringField):
