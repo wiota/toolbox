@@ -22,18 +22,14 @@ def handler(event):
 def slugify(sender, document):
     ''' Create a document's slug from its title. '''
 
-    result = []
-
     # Extract the words
-    for word in _punct_re.split(document.title.lower()):
+    result = _punct_re.split(document.title.lower())
 
-        # Encode all special characters
-        word = word.encode('translit/long')
+    # Encode all special characters
+    result = [word.encode('translit/long') for word in result]
 
-        # Check if anyting is left of the word
-        if word:
-            # Add to results
-            result.append(word)
+    # Check if anyting is left of the word
+    result = [word for word in result if word]
 
     # Check if there is anything at all in the result
     if not result:
@@ -41,12 +37,21 @@ def slugify(sender, document):
 
     # Join the slug words together
     slug = slug_attempt = unicode('-'.join(result))
+
+    query = {"slug": slug_attempt, "owner": document.owner}
+
+    # If this isn't a new document, exclude it from the query
+    if document.id is not None:
+        query["id__ne"] = document.id
+
+    # Counter for collisions
     count = 1
 
     # Check for collisions
-    while sender.objects(**{"slug": slug_attempt, "owner": document.owner}).count() > 0:
-        slug_attempt = slug + '-%s' % count
+    while sender.objects(**query).count() > 0:
+        query["slug"] = slug_attempt = slug + '-%s' % count
         count += 1 # Iterate
+
     document.slug = slug_attempt
 
 
