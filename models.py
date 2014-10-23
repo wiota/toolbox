@@ -1,5 +1,6 @@
 from flask.ext.security import UserMixin, RoleMixin, login_required
 from mongoengine import *
+from mongoengine.base.fields import BaseField
 import bson
 import datetime
 import re
@@ -104,6 +105,14 @@ class CustomPage(EmbeddedDocument, Sluggable):
     template_string = StringField(required=True)
     content = StringField(verbose_name="Content")
 
+
+class CustomVertexField(EmbeddedDocument, BaseField):
+    name = StringField(required=True)
+    verbose_name = StringField(required=True)
+    field_type = StringField(required=True)
+    required = BooleanField(required=True)
+
+
 class Host(Document):
     bucketname = StringField(required=True)
     owner = ReferenceField(User, required=True)
@@ -112,6 +121,7 @@ class Host(Document):
     template = StringField()
     title = StringField()
     subtitle = StringField()
+    custom_vertex_fields = DictField(CustomVertexField)
 
     def custom_from_slug(self, slug):
         ret = [cp for cp in self.custom_pages if cp.slug == slug]
@@ -125,6 +135,12 @@ class Administrator(User):
     admin = BooleanField(default=True)
 
 
+class CustomVertexFieldDocument(EmbeddedDocument):
+    key = StringField(required=True)
+    verbose_name = StringField(required=True)
+    value = StringField()
+
+
 class Vertex(Document):
     _expand_fields = ['succset']
     succset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
@@ -134,6 +150,7 @@ class Vertex(Document):
     public = BooleanField(default=True)
     meta = {'allow_inheritance': True}
     owner = ReferenceField(User, required=True)
+    customfields = ListField(GenericEmbeddedDocumentField(CustomVertexFieldDocument))
 
     def get_save_fields(self):
         return [k for k, v in self._fields.iteritems() if type(v) in [StringField, LongStringField]]

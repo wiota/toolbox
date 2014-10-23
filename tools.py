@@ -133,13 +133,34 @@ def document_to_form(self):
         URLField.__name__: "text"
     }
 
+    # Create a generator containing fields which have a verbose name
     fields = ((v.creation_counter, v)
               for k, v in self._fields.iteritems() if v.verbose_name)
+
+    # Sort the fields based on their creation_counter (first tuple item)
     sorted_fields = map(itemgetter(1), sorted(fields, key=itemgetter(0)))
+
+    # Create the field list object from the sorted fields
     field_list = [{"name": f.name,
                    "label": f.verbose_name,
                    "required": f.required,
                    "type": type_dict[type(f).__name__]} for f in sorted_fields]
+
+    # Get the current host
+    host = Host.objects.get(owner=current_user.id)
+
+    # Get any custom fields for the document type
+    custom_vertex_fields = host.custom_vertex_fields.get(self.__class__.__name__, [])
+
+    # Add the custom fields to the field list
+    for cv in custom_vertex_fields:
+        field_list.append({
+            "name" : cv.name,
+            "label" : cv.verbose_name,
+            "required" : cv.required,
+            "type" : type_dict[cv.field_type]
+        })
+
     return jsonify(make_response(field_list))
 
 
