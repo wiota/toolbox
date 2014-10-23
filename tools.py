@@ -114,6 +114,10 @@ def get_work_from_slug(owner, slug):
     work = Work.objects.get(owner=owner, slug=slug)
     return work, work.succset
 
+def get_happening_from_slug(owner, slug):
+    happening = Happening.objects.get(owner=owner, slug=slug)
+    return happening
+
 
 def make_response(ret=''):
     """ Wraps a dictionary into a response dictionary for the API endpoint to
