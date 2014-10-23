@@ -16,9 +16,11 @@ import requests
 import boto
 import json
 
+
 class AnonymousUser(AnonymousUserMixin):
-  def __init__(self):
-    self.admin = False
+
+    def __init__(self):
+        self.admin = False
 
 
 def initialize_db(flask_app):
@@ -150,15 +152,17 @@ def document_to_form(self):
     host = Host.objects.get(owner=current_user.id)
 
     # Get any custom fields for the document type
-    custom_vertex_fields = host.custom_vertex_fields.get(self.__class__.__name__, [])
+    custom_vertex_fields = host.custom_vertex_fields.get(
+        self.__class__.__name__,
+        [])
 
     # Add the custom fields to the field list
     for cv in custom_vertex_fields:
         field_list.append({
-            "name" : cv.name,
-            "label" : cv.verbose_name,
-            "required" : cv.required,
-            "type" : type_dict[cv.field_type]
+            "name": cv.name,
+            "label": cv.verbose_name,
+            "required": cv.required,
+            "type": type_dict[cv.field_type]
         })
 
     return jsonify(make_response(field_list))

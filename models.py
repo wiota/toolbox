@@ -9,6 +9,7 @@ from mongoengine import signals
 # For slugify
 _punct_re = re.compile(r'[\t !"#$%&\'()*\-/<=>?@\[\\\]^_`{|},.]+')
 
+
 def handler(event):
     """Signal decorator to allow use of callback functions as class decorators."""
     def decorator(fn):
@@ -18,6 +19,7 @@ def handler(event):
         fn.apply = apply
         return fn
     return decorator
+
 
 @handler(signals.pre_save)
 def slugify(sender, document):
@@ -34,7 +36,7 @@ def slugify(sender, document):
 
     # Check if there is anything at all in the result
     if not result:
-        result.append("untitled") # A default slug
+        result.append("untitled")  # A default slug
 
     # Join the slug words together
     slug = slug_attempt = unicode('-'.join(result))
@@ -51,7 +53,7 @@ def slugify(sender, document):
     # Check for collisions
     while sender.objects(**query).count() > 0:
         query["slug"] = slug_attempt = slug + '-%s' % count
-        count += 1 # Iterate
+        count += 1  # Iterate
 
     document.slug = slug_attempt
 
@@ -95,6 +97,7 @@ class User(Document, UserMixin):
         self.confirmed_at = datetime.datetime.now()
         self.save()
 
+
 class Sluggable(object):
     slug = StringField(required=True)
     title = StringField(required=True, verbose_name="Title")
@@ -127,6 +130,7 @@ class Host(Document):
         ret = [cp for cp in self.custom_pages if cp.slug == slug]
         return ret[0] if ret else None
 
+
 class Client(User):
     hosts = ListField(ReferenceField(Host))
 
@@ -150,14 +154,17 @@ class Vertex(Document):
     public = BooleanField(default=True)
     meta = {'allow_inheritance': True}
     owner = ReferenceField(User, required=True)
-    customfields = ListField(GenericEmbeddedDocumentField(CustomVertexFieldDocument))
+    customfields = ListField(
+        GenericEmbeddedDocumentField(CustomVertexFieldDocument))
 
     def get_save_fields(self):
-        return [k for k, v in self._fields.iteritems() if type(v) in [StringField, LongStringField]]
+        return [k for k, v in self._fields.iteritems() if type(
+            v) in [StringField, LongStringField]]
 
 
 class Medium(Vertex):
     pass
+
 
 class Photo(Medium):
     href = StringField(required=True)
