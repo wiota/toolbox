@@ -136,7 +136,7 @@ class Vertex(Document):
     owner = ReferenceField(User, required=True)
 
     def get_save_fields(self):
-        return [k for k, v in Category._fields.iteritems() if type(v) is StringField]
+        return [k for k, v in self._fields.iteritems() if type(v) in [StringField, LongStringField]]
 
 
 class Medium(Vertex):
