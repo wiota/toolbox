@@ -3,6 +3,7 @@ import requests
 from jinja2 import Environment, PackageLoader
 from premailer import transform
 from toolbox.template_tools import format_date, format_money
+from flask.ext.login import current_user
 import json
 
 
@@ -67,7 +68,12 @@ class LimeExceptionEmail(Email):
         self.subject = "[lime][ERROR] %s" % (exception)
         tb = "<br/>".join(traceback.split('\n'))
         tb = tb.replace(' ', '&nbsp;')
-        self.html = "<code style='display:block; font-size: 13px; width:800px'>%s</code>" % tb
+        self.html = ""
+        try:
+            self.html = "User was: %s<br/><br/>" % current_user.email
+        except:
+            pass
+        self.html += "<code style='display:block; font-size: 13px; width:800px'>%s</code>" % tb
         self.to = "goaheadandreply@wiota.co"
 
 class FacadeExceptionEmail(Email):
