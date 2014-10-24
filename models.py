@@ -159,7 +159,7 @@ class Vertex(Document):
 
     def get_save_fields(self):
         return [k for k, v in self._fields.iteritems() if type(
-            v) in [StringField, LongStringField]]
+            v) in [StringField, LongStringField, BooleanField]]
 
 
 class Medium(Vertex):
