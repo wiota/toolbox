@@ -130,6 +130,13 @@ def make_response(ret=''):
     """
     return {"result": ret}
 
+def get_custom_vertex_fields(vertex_type):
+    # Get the current host
+    host = Host.objects.get(owner=current_user.id)
+
+    # Get any custom fields for the document type
+    return host.custom_vertex_fields.get(vertex_type, [])
+
 
 def document_to_form(self):
     """ Converts a document into a serialized form. Provides the necessary
@@ -157,16 +164,9 @@ def document_to_form(self):
                    "required": f.required,
                    "type": type_dict[type(f).__name__]} for f in sorted_fields]
 
-    # Get the current host
-    host = Host.objects.get(owner=current_user.id)
-
-    # Get any custom fields for the document type
-    custom_vertex_fields = host.custom_vertex_fields.get(
-        self.__class__.__name__,
-        [])
 
     # Add the custom fields to the field list
-    for cv in custom_vertex_fields:
+    for cv in get_custom_vertex_fields(self.__class__.__name__):
         field_list.append({
             "name": cv.name,
             "label": cv.verbose_name,
