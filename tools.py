@@ -43,9 +43,9 @@ def admin_required(f):
 
 def retrieve_image(image_name, email_hash):
     bucket_name = "%s_%s" % (os.environ['S3_BUCKET'], email_hash)
-    size = request.args.to_dict()
-    w = size.get('w', None)
-    h = size.get('h', None)
+    args = request.args.to_dict()
+    w = args.get('w', None)
+    h = args.get('h', None)
     split = image_name.split(".")
     fn = "".join(split[0:-1])
     ext = split[-1]
@@ -61,6 +61,11 @@ def retrieve_image(image_name, email_hash):
             params["height"] = int(h)
             fn += "%sh" % (h)
 
+        # Allow the blitline function to be passed as a param
+        function = args.get("function", "resize_to_fit")
+        if function is not "resize_to_fit":
+            fn += function
+
         conn = boto.connect_s3()
         bucket = conn.get_bucket(bucket_name)
         key = bucket.get_key("%s.%s" % (fn, ext))
@@ -75,7 +80,7 @@ def retrieve_image(image_name, email_hash):
                 },
                 "functions": [
                     {
-                        "name": "resize_to_fit",
+                        "name": function,
                         "params": params,
                         "save": {
                             "image_identifier": image_name,
