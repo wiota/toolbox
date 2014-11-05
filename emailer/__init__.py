@@ -9,7 +9,7 @@ import json
 class Email(object):
     url = "https://api.mailgun.net/v2/wiota.co/messages"
     auth = ('api', os.environ.get('MAILGUN_API_KEY'))
-    env = Environment(loader=PackageLoader('toolbox.email', 'views'))
+    env = Environment(loader=PackageLoader('toolbox.emailer', 'views'))
     env.filters["money"] = format_money
     env.filters["date"] = format_date
 
