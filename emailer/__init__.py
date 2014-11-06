@@ -4,6 +4,7 @@ from jinja2 import Environment, PackageLoader
 from premailer import transform
 from toolbox.template_tools import format_date, format_money
 from flask.ext.login import current_user
+from flask import url_for
 import json
 
 
@@ -95,3 +96,20 @@ class StripeEmail(Email):
         data = data.replace(' ','&nbsp;')
         self.html = "<code style='display:block; font-size: 13px; width:800px'>%s</code>" % (data)
         self.to = "goaheadandreply@wiota.co"
+
+class InviteEmail(ActionEmail):
+
+    def __init__(self, to, link_href):
+        subject = "Confirm your new Lime account!"
+        content = "Clink the link below to confirm your account:"
+        link_text = "Confirm email address"
+        super(InviteEmail, self).__init__(to, subject, content, link_text, link_href)
+
+class RegistrationEmail(ActionEmail):
+
+    def __init__(self, to):
+        subject = "You've successfully registered."
+        content = "Welcome to Lime. To get started, click to login:"
+        link_text = "Log in now"
+        link_href = url_for("root.index", email=to, _external=True)
+        super(RegistrationEmail, self).__init__(to, subject, content, link_text, link_href)
