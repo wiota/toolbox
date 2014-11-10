@@ -1,4 +1,5 @@
 from flask.ext.security import UserMixin, RoleMixin, login_required
+from flask.ext.login import current_user
 from mongoengine import *
 from mongoengine.base.fields import BaseField
 import bson
@@ -41,7 +42,7 @@ def slugify(sender, document):
     # Join the slug words together
     slug = slug_attempt = unicode('-'.join(result))
 
-    query = {"slug": slug_attempt, "owner": document.owner}
+    query = {"slug": slug_attempt, "host": document.host}
 
     # If this isn't a new document, exclude it from the query
     if document.id is not None:
@@ -118,7 +119,7 @@ class CustomVertexField(EmbeddedDocument, BaseField):
 
 class Host(Document):
     bucketname = StringField(required=True)
-    owner = ReferenceField(User, required=True)
+    owners = ListField(ReferenceField(User, required=True))
     hostname = StringField(required=True)
     custom_pages = ListField(GenericEmbeddedDocumentField(CustomPage))
     template = StringField()
@@ -129,6 +130,14 @@ class Host(Document):
     def custom_from_slug(self, slug):
         ret = [cp for cp in self.custom_pages if cp.slug == slug]
         return ret[0] if ret else None
+
+    @classmethod
+    def by_owner(cls, owner):
+        return cls.objects.get(owners__in=[owner.id])
+
+    @classmethod
+    def by_current_user(cls):
+        return cls.by_owner(current_user)
 
 
 class Client(User):
@@ -153,13 +162,20 @@ class Vertex(Document):
     deletable = BooleanField(default=True)
     public = BooleanField(default=True)
     meta = {'allow_inheritance': True}
-    owner = ReferenceField(User, required=True)
+    host = ReferenceField(Host, required=True)
     customfields = ListField(
         GenericEmbeddedDocumentField(CustomVertexFieldDocument))
 
     def get_save_fields(self):
         return [k for k, v in self._fields.iteritems() if type(
             v) in [StringField, LongStringField, BooleanField]]
+
+    @classmethod
+    def by_id(cls, id, host=None):
+        if host is None:
+            return cls.objects.get(host=Host.by_current_user(), id=id)
+        else:
+            return cls.objects.get(host=host, id=id)
 
 
 class Medium(Vertex):
@@ -199,6 +215,10 @@ class Tag(Vertex, Sluggable):
 
 class Apex(Vertex):
     source = BooleanField(default=True)
+
+    @classmethod
+    def by_current_user(cls):
+        return cls.objects.get(host=Host.by_current_user())
 
 
 class Body(Apex):

@@ -110,17 +110,17 @@ def get_host_by_hostname(hostname):
         return None
 
 
-def get_category_from_slug(owner, slug):
-    cat = Category.objects.get(owner=owner, slug=slug)
+def get_category_from_slug(host, slug):
+    cat = Category.objects.get(host=host, slug=slug)
     return cat
 
 
-def get_work_from_slug(owner, slug):
-    work = Work.objects.get(owner=owner, slug=slug)
+def get_work_from_slug(host, slug):
+    work = Work.objects.get(host=host, slug=slug)
     return work, work.succset
 
-def get_happening_from_slug(owner, slug):
-    happening = Happening.objects.get(owner=owner, slug=slug)
+def get_happening_from_slug(host, slug):
+    happening = Happening.objects.get(host=host, slug=slug)
     return happening
 
 
@@ -132,7 +132,7 @@ def make_response(ret=''):
 
 def get_custom_vertex_fields(vertex_type):
     # Get the current host
-    host = Host.objects.get(owner=current_user.id)
+    host = Host.by_current_user()
 
     # Get any custom fields for the document type
     return host.custom_vertex_fields.get(vertex_type, [])
