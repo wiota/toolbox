@@ -126,6 +126,7 @@ class Host(Document):
     title = StringField()
     subtitle = StringField()
     custom_vertex_fields = DictField(CustomVertexField)
+    contact_email = StringField()
 
     def custom_from_slug(self, slug):
         ret = [cp for cp in self.custom_pages if cp.slug == slug]
