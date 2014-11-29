@@ -185,7 +185,6 @@ class Medium(Vertex):
 
 class Photo(Medium):
     href = StringField(required=True)
-    resize_href = StringField()
 
 
 class Video(Medium):
