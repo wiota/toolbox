@@ -51,7 +51,7 @@ def retrieve_image(image_name, bucket_name):
     params = {}
     url = "https://%s.s3.amazonaws.com/" % (bucket_name)
 
-    if w is not None or h is not None:  # Some size is given
+    if w is not None or h is not None: # Some size is given
         fn += "-"  # Separator for size
         if w is not None:
             params["width"] = int(w)
@@ -60,11 +60,16 @@ def retrieve_image(image_name, bucket_name):
             params["height"] = int(h)
             fn += "%sh" % (h)
 
-        # Allow the blitline function to be passed as a param
+        # Allow the blitline function to be passed as a param.
+        # The default function is "resize_to_fit"
         function = args.get("function", "resize_to_fit")
+
+        # The "resize_to_fit" function is the default, so to maintain backwards
+        # compatibility we don't add it to the filename
         if function is not "resize_to_fit":
             fn += function
 
+        # Connect to the S3 instance
         conn = boto.connect_s3()
         bucket = conn.get_bucket(bucket_name)
         key = bucket.get_key("%s.%s" % (fn, ext))
@@ -77,22 +82,42 @@ def retrieve_image(image_name, bucket_name):
                     "bucket": bucket_name,
                     "key": image_name
                 },
-                "functions": [
-                    {
-                        "name": function,
+                "functions": []
+            }
+            if ext.lower() == "gif":
+                # This image is a gif, to resize we need to preprocess
+                blit_job["pre_process"] = {
+                    "resize_gif": {
                         "params": params,
-                        "save": {
-                            "image_identifier": image_name,
-                            "save_profiles": "true",
-                            "quality": 90,
-                            "s3_destination": {
-                                "bucket": bucket_name,
-                                "key": "%s.%s" % (fn, ext)
-                            },
+                        "s3_destination": {
+                            "bucket": bucket_name,
+                            "key": "%s.%s" % (fn, ext)
                         }
                     }
-                ]
-            }
+                }
+                # Since we preprocessed, we don't need to run a function
+                blit_job["functions"].append({
+                    "name": "no_op",
+                    "save": {
+                        "image_identifier": image_name
+                    }
+                })
+            else: # This is a regular image
+                blit_job["functions"].append({
+                    "name": function,
+                    "params": params,
+                    "save": {
+                        "image_identifier": image_name,
+                        "save_profiles": "true",
+                        "quality": 90,
+                        "s3_destination": {
+                            "bucket": bucket_name,
+                            "key": "%s.%s" % (fn, ext)
+                        },
+                    }
+                })
+
+            # POST the job to blitline
             r = requests.post(
                 "http://api.blitline.com/job",
                 data={
