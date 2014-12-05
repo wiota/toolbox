@@ -151,7 +151,6 @@ class Administrator(User):
 
 class CustomVertexFieldDocument(EmbeddedDocument):
     key = StringField(required=True)
-    verbose_name = StringField(required=True)
     value = StringField()
 
 
@@ -165,7 +164,7 @@ class Vertex(Document):
     meta = {'allow_inheritance': True}
     host = ReferenceField(Host, required=True)
     customfields = ListField(
-        GenericEmbeddedDocumentField(CustomVertexFieldDocument))
+        EmbeddedDocumentField(CustomVertexFieldDocument))
 
     def get_save_fields(self):
         return [k for k, v in self._fields.iteritems() if type(
