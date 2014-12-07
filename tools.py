@@ -133,6 +133,8 @@ def get_host_by_hostname(hostname):
     except Host.DoesNotExist:
         return None
 
+def get_body(host):
+    return Body.objects.get(host=host)
 
 def get_category_from_slug(host, slug):
     cat = Category.objects.get(host=host, slug=slug)
