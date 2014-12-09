@@ -140,10 +140,12 @@ def get_category_from_slug(host, slug):
     cat = Category.objects.get(host=host, slug=slug)
     return cat
 
-
 def get_work_from_slug(host, slug):
     work = Work.objects.get(host=host, slug=slug)
     return work, work.succset
+
+def get_happenings_apex(host):
+    return Happenings.objects.get(host=host)
 
 def get_happening_from_slug(host, slug):
     happening = Happening.objects.get(host=host, slug=slug)
