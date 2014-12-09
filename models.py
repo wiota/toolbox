@@ -161,6 +161,7 @@ class Vertex(Document):
     cover = ListField()
     deletable = BooleanField(default=True)
     public = BooleanField(default=True)
+    layout = StringField(default='');
     meta = {'allow_inheritance': True}
     host = ReferenceField(Host, required=True)
     customfields = ListField(
