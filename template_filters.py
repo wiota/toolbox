@@ -1,5 +1,6 @@
 import re
 from time import strftime, localtime
+from jinja2 import escape
 
 _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
