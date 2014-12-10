@@ -2,7 +2,7 @@ import os
 import requests
 from jinja2 import Environment, PackageLoader
 from premailer import transform
-from toolbox.template_tools import format_date, format_money
+from toolbox.template_filters import format_date, format_money
 from flask.ext.login import current_user
 from flask import url_for
 import json
