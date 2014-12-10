@@ -19,9 +19,3 @@ def get_happenings(config):
 
 def get_tag(config, tag_name):
     return Tag.objects.get(slug=tag_name, host=config["HOST"]).succset
-
-def format_date(value):
-    return strftime("%b %d %Y", localtime(int(value)))
-
-def format_money(value):
-    return "$%.2f" % (value/100.0)
