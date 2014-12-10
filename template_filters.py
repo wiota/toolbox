@@ -10,5 +10,5 @@ def format_date(value):
 def format_money(value):
     return "$%.2f" % (value/100.0)
 
-def format_nb2br(value):
+def format_nl2br(value):
     return u'\n\n'.join(u'<p>%s</p>' % p.replace('\n', '<br>\n') for p in _paragraph_re.split(escape(value)))
