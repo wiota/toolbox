@@ -70,10 +70,7 @@ class LimeExceptionEmail(Email):
         tb = "<br/>".join(traceback.split('\n'))
         tb = tb.replace(' ', '&nbsp;')
         self.html = ""
-        try:
-            self.html = "User was: %s<br/><br/>" % current_user.email
-        except:
-            pass
+        self.html = "User was: %s<br/><br/>" % current_user.email
         self.html += "<code style='display:block; font-size: 13px; width:800px'>%s</code>" % tb
         self.to = "goaheadandreply@wiota.co"
 
@@ -83,11 +80,7 @@ class FacadeExceptionEmail(Email):
         self.subject = "[facade][ERROR] %s" % (exception)
         tb = "<br/>".join(traceback.split('\n'))
         tb = tb.replace(' ', '&nbsp;')
-        self.html = ""
-        try:
-            self.html = "Host was: %s<br/><br/>" % host.hostname
-        except:
-            pass
+        self.html = "Host was: %s<br/><br/>" % host.hostname
         self.html += "<code style='display:block; font-size: 13px; width:800px'>%s</code>" % tb
         self.to = "goaheadandreply@wiota.co"
 

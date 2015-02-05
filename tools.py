@@ -21,6 +21,7 @@ class AnonymousUser(AnonymousUserMixin):
 
     def __init__(self):
         self.admin = False
+        self.email = "(Anonymous User)"
 
 
 def initialize_db(flask_app):
