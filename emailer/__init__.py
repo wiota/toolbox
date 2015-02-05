@@ -79,11 +79,16 @@ class LimeExceptionEmail(Email):
 
 class FacadeExceptionEmail(Email):
 
-    def __init__(self, exception, traceback):
+    def __init__(self, exception, traceback, host):
         self.subject = "[facade][ERROR] %s" % (exception)
         tb = "<br/>".join(traceback.split('\n'))
         tb = tb.replace(' ', '&nbsp;')
-        self.html = "<code style='display:block; font-size: 13px; width:800px'>%s</code>" % tb
+        self.html = ""
+        try:
+            self.html = "Host was: %s<br/><br/>" % host.hostname
+        except:
+            pass
+        self.html += "<code style='display:block; font-size: 13px; width:800px'>%s</code>" % tb
         self.to = "goaheadandreply@wiota.co"
 
 class StripeEmail(Email):
