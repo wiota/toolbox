@@ -164,7 +164,7 @@ def get_custom_vertex_fields(vertex_type):
     host = Host.by_current_user()
 
     # Get any custom fields for the document type
-    return host.custom_vertex_fields.get(vertex_type, [])
+    return host.custom_vertex_fields.get(vertex_type.lower(), [])
 
 
 def document_to_form(self):
