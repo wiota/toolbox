@@ -153,11 +153,12 @@ class CustomVertexFieldDocument(EmbeddedDocument):
     key = StringField(required=True)
     value = StringField()
 
-
-class Vertex(Document):
+@slugify.apply
+class Vertex(Document, Sluggable):
     _expand_fields = ['succset']
     succset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
     predset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
+    vertex_type = StringField()
     cover = ListField()
     deletable = BooleanField(default=True)
     public = BooleanField(default=True)
@@ -167,9 +168,26 @@ class Vertex(Document):
     customfields = ListField(
         EmbeddedDocumentField(CustomVertexFieldDocument))
 
+
     def get_save_fields(self):
         return [k for k, v in self._fields.iteritems() if type(
             v) in [StringField, LongStringField, BooleanField]]
+
+    @classmethod
+    def get_common_fields(self):
+
+        # Would prefer for title not to be "common". Some fields may
+        # not have titles. I would like to define the Title in the
+        # schema for the vertex, but this would not allow the title
+        # to be "slugged"
+        #
+        # URL as graph path may change this too
+        common_fields = ['vertex_type', 'cover', 'deletable', 'public', 'layout', 'title']
+        return [k for k, v in self._fields.iteritems() if k in common_fields]
+
+    @classmethod
+    def get_typical_fields(self, host, vertex_type):
+        return [x.name for x in host.custom_vertex_fields.get(vertex_type, [])]
 
     @classmethod
     def by_id(cls, id, host=None):
