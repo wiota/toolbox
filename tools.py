@@ -211,13 +211,30 @@ def update_document(document, data_dict):
         http://stackoverflow.com/a/19007761
     """
 
-    def field_value(field, value):
+    def field_value(document, key, value):
+        """ Get the true value of the field depending on the type. """
 
+        # Support for DynamicDocument types. If the schematic_fields ever
+        # become non-regular (e.g., not StringField, BooleanField, etc) then
+        # this will become a problem. However, since the type of the
+        # schematic_field is stored in the Host, we can just merge it from
+        # there before updating the document. But maybe that won't happen...
+        if key not in document._fields:
+            return value
+
+        # Get the field from the documents's _field array. We've already
+        # checked if it's there so it's guaranteed to be
+        field = document._fields[key]
+
+        # These are lists, so we should return a list built from recursive
+        # calls to field_value
         if field.__class__ in (fields.ListField, fields.SortedListField):
             return [
                 field_value(field.field, item)
                 for item in value
             ]
+
+        # Here we need to return the proper document_type
         if field.__class__ in (
             fields.EmbeddedDocumentField,
             fields.GenericEmbeddedDocumentField,
@@ -225,13 +242,16 @@ def update_document(document, data_dict):
             fields.GenericReferenceField
         ):
             return field.document_type(**value)
+
+        # Otherwise, just return the value.
         else:
             return value
 
-    [setattr(
-        document, key,
-        field_value(document._fields[key], value)
-    ) for key, value in data_dict.items()]
+    for key, value in data_dict.items():
+        setattr(
+            document, key,
+            field_value(document, key, value)
+        )
 
     return document
 

@@ -1,6 +1,7 @@
 from flask.ext.security import UserMixin, RoleMixin, login_required
 from flask.ext.login import current_user
-from mongoengine import *
+from mongoengine import Document, DynamicDocument, EmbeddedDocument, PULL
+from mongoengine.fields import *
 from mongoengine.base.fields import BaseField
 import bson
 import datetime
@@ -149,12 +150,8 @@ class Administrator(User):
     admin = BooleanField(default=True)
 
 
-class CustomVertexFieldDocument(EmbeddedDocument):
-    key = StringField(required=True)
-    value = StringField()
-
 @slugify.apply
-class Vertex(Document, Sluggable):
+class Vertex(DynamicDocument, Sluggable):
     _expand_fields = ['succset']
     succset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
     predset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
@@ -165,29 +162,22 @@ class Vertex(Document, Sluggable):
     layout = StringField(default='');
     meta = {'allow_inheritance': True}
     host = ReferenceField(Host, required=True)
-    customfields = ListField(
-        EmbeddedDocumentField(CustomVertexFieldDocument))
 
 
-    def get_save_fields(self):
+    def get_base_fields(self):
+        """ Returns the save-able fields inherent to the Vertex model. """
         return [k for k, v in self._fields.iteritems() if type(
             v) in [StringField, LongStringField, BooleanField]]
 
-    @classmethod
-    def get_common_fields(self):
 
-        # Would prefer for title not to be "common". Some fields may
-        # not have titles. I would like to define the Title in the
-        # schema for the vertex, but this would not allow the title
-        # to be "slugged"
-        #
-        # URL as graph path may change this too
-        common_fields = ['vertex_type', 'cover', 'deletable', 'public', 'layout', 'title']
-        return [k for k, v in self._fields.iteritems() if k in common_fields]
+    def get_schematic_fields(self):
+        """ Returns the typical fields for this vertex_type in the host. """
+        return [x.name for x in Host.by_current_user().custom_vertex_fields.get(self.vertex_type, [])]
 
-    @classmethod
-    def get_typical_fields(self, host, vertex_type):
-        return [x.name for x in host.custom_vertex_fields.get(vertex_type, [])]
+
+    def get_aggregate_fields(self):
+        return self.get_base_fields() + self.get_schematic_fields()
+
 
     @classmethod
     def by_id(cls, id, host=None):
