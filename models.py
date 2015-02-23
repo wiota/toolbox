@@ -101,6 +101,7 @@ class User(Document, UserMixin):
 
 
 class Sluggable(object):
+    """ For now, this is only used for CustomPage. """
     slug = StringField(required=True)
     title = StringField(required=True, verbose_name="Title")
 
@@ -151,10 +152,12 @@ class Administrator(User):
 
 
 @slugify.apply
-class Vertex(DynamicDocument, Sluggable):
+class Vertex(DynamicDocument):
     _expand_fields = ['succset']
     succset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
     predset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
+    title = StringField(required=True, verbose_name="Title")
+    slug = StringField(required=True)
     vertex_type = StringField()
     cover = ListField()
     deletable = BooleanField(default=True)
@@ -187,24 +190,28 @@ class Vertex(DynamicDocument, Sluggable):
             return cls.objects.get(host=host, id=id)
 
 
+@slugify.apply
 class Medium(Vertex):
     pass
 
 
+@slugify.apply
 class Photo(Medium):
     href = StringField(required=True)
 
 
+@slugify.apply
 class Video(Medium):
     pass
 
 
+@slugify.apply
 class Audio(Medium):
     pass
 
 
 @slugify.apply
-class Work(Vertex, Sluggable):
+class Work(Vertex):
     description = LongStringField(verbose_name="Description")
     date = StringField(verbose_name="Date created")
     medium = StringField(verbose_name="Medium")
@@ -212,15 +219,16 @@ class Work(Vertex, Sluggable):
 
 
 @slugify.apply
-class Category(Vertex, Sluggable):
+class Category(Vertex):
     pass
 
 
 @slugify.apply
-class Tag(Vertex, Sluggable):
+class Tag(Vertex):
     pass
 
 
+@slugify.apply
 class Apex(Vertex):
     source = BooleanField(default=True)
 
@@ -229,16 +237,18 @@ class Apex(Vertex):
         return cls.objects.get(host=Host.by_current_user())
 
 
+@slugify.apply
 class Body(Apex):
     pass
 
 
+@slugify.apply
 class Happenings(Apex):
     pass
 
 
 @slugify.apply
-class Happening(Vertex, Sluggable):
+class Happening(Vertex):
     description = LongStringField(verbose_name="Description")
     location = StringField(verbose_name="Location")
     link = URLField(verbose_name="Link")
