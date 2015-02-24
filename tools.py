@@ -152,6 +152,10 @@ def get_happening_from_slug(host, slug):
     happening = Happening.objects.get(host=host, slug=slug)
     return happening
 
+def get_vertex_from_slug(host, slug):
+    vertex = Vertex.objects.get(host=host, slug=slug)
+    return vertex
+
 
 def make_response(ret=''):
     """ Wraps a dictionary into a response dictionary for the API endpoint to
