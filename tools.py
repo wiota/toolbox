@@ -137,6 +137,7 @@ def get_host_by_hostname(hostname):
 def get_body(host):
     return Body.objects.get(host=host)
 
+# May not need these functions...
 def get_category_from_slug(host, slug):
     cat = Category.objects.get(host=host, slug=slug)
     return cat
@@ -145,6 +146,7 @@ def get_work_from_slug(host, slug):
     work = Work.objects.get(host=host, slug=slug)
     return work
 
+# except this one
 def get_happenings_apex(host):
     return Happenings.objects.get(host=host)
 
@@ -152,6 +154,7 @@ def get_happening_from_slug(host, slug):
     happening = Happening.objects.get(host=host, slug=slug)
     return happening
 
+# This function replaces them all
 def get_vertex_from_slug(host, slug):
     vertex = Vertex.objects.get(host=host, slug=slug)
     return vertex
