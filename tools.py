@@ -167,7 +167,6 @@ def make_response(ret=''):
     return {"result": ret}
 
 def get_custom_vertex_fields(vertex_type):
-    # Get the current host
     host = Host.by_current_user()
 
     # Get any custom fields for the document type
