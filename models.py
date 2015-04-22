@@ -153,7 +153,7 @@ class Administrator(User):
 
 @slugify.apply
 class Vertex(DynamicDocument):
-    _expand_fields = ['succset']
+    _expand_fields = ['succset', 'predset']
     succset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
     predset = ListField(ReferenceField("self", reverse_delete_rule=PULL))
     title = StringField(required=True, verbose_name="Title")
