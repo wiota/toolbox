@@ -10,7 +10,6 @@ from mongoengine import Document, fields
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.login import current_user, AnonymousUserMixin
 from toolbox.models import *
-from functools import wraps
 from itsdangerous import URLSafeSerializer
 import requests
 import boto
@@ -30,16 +29,6 @@ def initialize_db(flask_app):
         "DB": urlparse(MONGO_URL).path[1:],
         "host": MONGO_URL}
     return MongoEngine(flask_app)
-
-
-# Admin view decorator
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.admin:
-            return redirect(url_for("root.index"))
-        return f(*args, **kwargs)
-    return decorated_function
 
 
 def retrieve_image(image_name, bucket_name):
