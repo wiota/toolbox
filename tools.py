@@ -112,6 +112,12 @@ def retrieve_image(image_name, bucket_name):
                 "http://api.blitline.com/job",
                 data={
                     'json': json.dumps(blit_job)})
+
+            # Long-poll to wait for response
+            job_id = r.json()["results"]["job_id"]
+            _ = requests.get(
+                "http://cache.blitline.com/listen/%s" % (job_id))
+
         return redirect("%s%s.%s" % (url, fn, ext))
     else:
         return redirect("%s%s" % (url, image_name))
