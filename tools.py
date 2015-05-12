@@ -39,7 +39,7 @@ def retrieve_image(image_name, bucket_name):
     fn = "".join(split[0:-1])
     ext = split[-1]
     params = {}
-    url = "https://%s.s3.amazonaws.com/" % (bucket_name)
+    url = "http://%s.s3.amazonaws.com/" % (bucket_name)
 
     if w is not None or h is not None: # Some size is given
         fn += "-"  # Separator for size
