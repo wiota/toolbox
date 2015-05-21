@@ -120,6 +120,7 @@ class CustomVertexField(EmbeddedDocument, BaseField):
 
 
 class Host(Document):
+    _expand_fields = ['apex']
     bucketname = StringField(required=True)
     owners = ListField(ReferenceField(User, required=True))
     hostname = StringField(required=True)
@@ -129,6 +130,7 @@ class Host(Document):
     subtitle = StringField()
     custom_vertex_fields = DictField(CustomVertexField)
     contact_email = StringField()
+    apex = ReferenceField('Apex') # Must be a string!
 
     def custom_from_slug(self, slug):
         ret = [cp for cp in self.custom_pages if cp.slug == slug]
