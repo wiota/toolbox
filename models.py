@@ -209,7 +209,7 @@ class Video(Medium):
 
 @slugify.apply
 class Audio(Medium):
-    pass
+    href = StringField(required=True)
 
 
 @slugify.apply
