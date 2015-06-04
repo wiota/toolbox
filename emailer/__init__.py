@@ -74,6 +74,17 @@ class LimeExceptionEmail(Email):
         self.html += "<code style='display:block; font-size: 13px; width:800px'>%s</code>" % tb
         self.to = "goaheadandreply@wiota.co"
 
+class ExceptionEmail(Email):
+
+    def __init__(self, exception, traceback, host, app):
+        self.subject = "[%s][ERROR] %s" % (app, exception)
+        tb = "<br/>".join(traceback.split('\n'))
+        tb = tb.replace(' ', '&nbsp;')
+        self.html = "Host was: %s<br/><br/>" % host.hostname
+        self.html += "<code style='display:block; font-size: 13px; width:800px'>%s</code>" % tb
+        self.to = "goaheadandreply@wiota.co"
+
+# TODO: Deprecated, remove this.
 class FacadeExceptionEmail(Email):
 
     def __init__(self, exception, traceback, host):
