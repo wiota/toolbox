@@ -241,12 +241,12 @@ class Apex(Vertex):
 
 @slugify.apply
 class Body(Apex):
-    pass
+    vertex_type = StringField(default="body")
 
 
 @slugify.apply
 class Happenings(Apex):
-    pass
+    vertex_type = StringField(default="calendar")
 
 
 @slugify.apply
