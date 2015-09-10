@@ -3,4 +3,4 @@ if [ ! -d "venv" ]; then
 fi
 source venv/bin/activate
 pip install -q -r requirements.txt
-python app.py
+foreman start
