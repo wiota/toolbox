@@ -19,3 +19,6 @@ def get_happenings(config):
 
 def get_tag(config, tag_name):
     return Tag.objects.get(slug=tag_name, host=config["HOST"]).succset
+
+def get_vertex(config, slug):
+    return Vertex.objects.get(slug=slug, host=config["HOST"])
