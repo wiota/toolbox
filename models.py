@@ -112,11 +112,21 @@ class CustomPage(EmbeddedDocument, Sluggable):
     content = StringField(verbose_name="Content")
 
 
-class CustomVertexField(EmbeddedDocument, BaseField):
+class VertexField(EmbeddedDocument, BaseField):
     name = StringField(required=True)
+    required = BooleanField(required=True)
+    og = StringField()
+
+    meta = {'allow_inheritance': True}
+
+
+class CustomVertexField(VertexField):
     verbose_name = StringField(required=True)
     field_type = StringField(required=True)
-    required = BooleanField(required=True)
+
+
+class OpenGraphURLField(CustomVertexField):
+    pass
 
 
 class Host(Document):
@@ -177,11 +187,21 @@ class Vertex(DynamicDocument):
 
     def get_schematic_fields(self):
         """ Returns the typical fields for this vertex_type in the host. """
-        return [x.name for x in Host.by_current_user().custom_vertex_fields.get(self.vertex_type, [])]
+        return [x.name for x in self.host.custom_vertex_fields.get(self.vertex_type, [])]
 
 
     def get_aggregate_fields(self):
         return self.get_base_fields() + self.get_schematic_fields()
+
+
+    def get_typed_fields(self, field_type):
+        vertex_fields = self.host.custom_vertex_fields.get(self.vertex_type, [])
+        return [v.name for v in vertex_fields if type(v) is field_type]
+
+
+    def get_og_mapping(self):
+        vertex_fields = self.host.custom_vertex_fields.get(self.vertex_type, [])
+        return {v.name: v.og for v in vertex_fields if v.og}
 
 
     @classmethod
